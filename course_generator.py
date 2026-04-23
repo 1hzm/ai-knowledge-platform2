@@ -98,6 +98,9 @@ class CourseGenerator:
         流式生成课程大纲
         Yields: MiniMax streaming chunks
         """
+        full_text = ''
+        course_doc = None
+
         if not self.MINIMAX_API_KEY:
             logger.error("MINIMAX_API_KEY not set")
             yield "Error: API key not configured"
@@ -144,9 +147,29 @@ class CourseGenerator:
                                 delta = chunk_data['choices'][0].get('delta', {})
                                 content = delta.get('content', '')
                                 if content:
+                                    full_text += content
                                     yield content
                         except json.JSONDecodeError:
                             continue
         except Exception as e:
             logger.error(f"Course generation error: {e}")
             yield f"Error: {str(e)}"
+
+        # 流结束后，解析并yield完整课程结构
+        try:
+            # 尝试从full_text中提取JSON
+            import re
+            json_match = re.search(r'\{[\s\S]*\}', full_text)
+            if json_match:
+                course_doc = json.loads(json_match.group(0))
+            else:
+                course_doc = None
+        except Exception as e:
+            logger.error(f"Course JSON parse error: {e}")
+            course_doc = None
+
+        if course_doc:
+            yield {
+                'type': 'course_generated',
+                'data': course_doc
+            }

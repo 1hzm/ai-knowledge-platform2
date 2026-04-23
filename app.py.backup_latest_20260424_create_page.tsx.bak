@@ -1,0 +1,1825 @@
+'use client';
+
+import React, { useState, useRef, useEffect, useReducer } from 'react';
+import {
+  Input, Button, Avatar, Card, Modal, message, InputNumber,
+  Switch, Progress, Checkbox
+} from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+
+const { TextArea } = Input;
+import {
+  SendOutlined, RobotOutlined, UserOutlined, StarFilled, StarOutlined,
+  EditOutlined, EyeOutlined, PlusOutlined, ClockCircleOutlined,
+  ExpandOutlined, ShrinkOutlined, PauseOutlined, DeleteOutlined
+} from '@ant-design/icons';
+import { generateCourseOutline, generateSingleModuleContent, reviewContent, CourseDocument } from '@/lib/ai';
+import { generateCourseOutlineStream } from '@/lib/backend';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { CONTENT_TYPE_MAP } from '../../lib/constants';
+
+// ============ Types ============
+
+interface Message {
+  role: 'user' | 'ai';
+  content: string;
+  time: string;
+}
+
+type StepType = 'input' | 'document' | 'preview' | 'final' | 'step3' | 'step4' | 'module';
+
+// CourseDocument is imported from @/lib/ai
+
+// ============ Module Types ============
+
+interface ModuleItem {
+  key: string;
+  label: string;
+  defaultChecked: boolean;
+}
+
+interface ModuleGroup {
+  key: string;
+  title: string;
+  modules: ModuleItem[];
+}
+
+type GenerationStatus = 'pending' | 'generating' | 'completed' | 'failed';
+
+interface GenerationItem {
+  key: string;
+  label: string;
+  status: GenerationStatus;
+  progress: number;
+  detail: string;
+  content?: string;
+  // 文件信息
+  filePath?: string;
+  fileUrl?: string;
+  fileName?: string;
+}
+
+interface ProjectFile {
+  type: 'ppt' | 'lecture' | 'content_text' | 'content_image' | 'content_audio';
+  filename: string;
+  path: string;
+  url: string;
+}
+
+import Step3Modules from '@/components/Step3Modules';
+import Step4Generation from '@/components/Step4Generation';
+
+
+interface HistoryItem2 {
+  id: string;
+  topic: string;
+  preview: string;
+  createdAt: string;
+  courseDoc?: CourseDocument;
+}
+
+// ============ 对话历史管理 ============
+const CONV_STORAGE_KEY = '__conversations__';
+const MAX_CONVERSATIONS = 20;
+
+interface Conversation {
+  id: string;
+  title: string;
+  messages: Message[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ============ Generating Progress Component ============
+
+function GeneratingProgress() {
+  return (
+    <>
+      <div style={{ fontSize: 15, color: '#333', marginBottom: 8 }}>正在使用AI生成课程大纲</div>
+      <div style={{ fontSize: 13, color: '#999', marginBottom: 16 }}>AI正在思考中，请稍候...</div>
+      <Progress percent={75} status="active" size="small" style={{ maxWidth: 300, margin: '0 auto 24px' }} />
+      <div style={{ marginTop: 32, display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 400, margin: '32px auto 0' }}>
+        <div style={{ height: 48, background: 'linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite', borderRadius: 8 }} />
+        <div style={{ height: 32, background: 'linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite 0.1s', borderRadius: 8 }} />
+        <div style={{ height: 48, background: 'linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite 0.2s', borderRadius: 8 }} />
+        <div style={{ height: 32, background: 'linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite 0.3s', borderRadius: 8 }} />
+      </div>
+      <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+    </>
+  );
+}
+
+// ============ Main Component ============
+
+export default function CreatePage() {
+  const { t } = useLanguage();
+  const [input, setInput] = useState('');
+  const [hasStarted, setHasStarted] = useState(false);
+  const [step, setStep] = useState<StepType>('input');
+  const [editMode, setEditMode] = useState(false);
+  const [historyVisible, setHistoryVisible] = useState(false);
+  const [historyList, setHistoryList] = useState<HistoryItem2[]>([]);
+  const [courseDoc, setCourseDoc] = useState<CourseDocument | null>(null);
+  const [prevDoc, setPrevDoc] = useState<CourseDocument | null>(null);
+  const [splitRatio, setSplitRatio] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+  const [showDocPanel, setShowDocPanel] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isPanelMaximized, setIsPanelMaximized] = useState(false);
+  const [isPanelMinimized, setIsPanelMinimized] = useState(false);
+  // Track if we're editing an existing project (from history), so we update instead of creating new
+  const [loadedProjectId, setLoadedProjectId] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const docPanelRef = useRef<HTMLDivElement>(null);
+
+  // Step 3 & 4 state
+  const [selectedModules, setSelectedModules] = useState<string[]>([]);
+  const [auditEnabled, setAuditEnabled] = useState(true);
+  const [isGeneratingOutline, setIsGeneratingOutline] = useState(false);
+  const [streamingPreview, setStreamingPreview] = useState('');
+  const streamingPreviewRef = useRef('');
+  const loadingMsgIndexRef = useRef<number | null>(null);
+  const typingIndicatorMsgIndexRef = useRef<number | null>(null);
+  const requestConvIdRef = useRef<string | null>(null);
+  const [, forceRender] = useReducer(x => x + 1, 0);
+  // Step 4 review state
+  const [reviewStatus, setReviewStatus] = useState<'idle' | 'reviewing' | 'passed' | 'failed'>('idle');
+  const [reviewIssues, setReviewIssues] = useState<string[]>([]);
+  const [completedGenerationItems, setCompletedGenerationItems] = useState<GenerationItem[]>([]);
+
+  // AI popup
+  const [selectedText, setSelectedText] = useState('');
+  const [selectionPos, setSelectionPos] = useState({ x: 0, y: 0 });
+  const [showAiPopup, setShowAiPopup] = useState(false);
+  const [aiGeneratedContent, setAiGeneratedContent] = useState('');
+  const [regenerating, setRegenerating] = useState(false);
+  const lastSelectedTextRef = useRef('');
+
+  // Chat session ID for memory (each browser session gets its own conversation memory)
+  const [chatSessionId, setChatSessionId] = useState<string>('');
+
+  // ============ 对话历史管理状态 ============
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConvId, setCurrentConvId] = useState<string | null>(null);
+  // messages 从属于当前对话，由 conversation 管理
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'ai', content: '', time: '' },
+  ]);
+
+  // Initialize chat session ID from sessionStorage (runs once on mount)
+  useEffect(() => {
+    let sid = sessionStorage.getItem('__chat_session_id__');
+    if (!sid) {
+      sid = `chat_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      sessionStorage.setItem('__chat_session_id__', sid);
+    }
+    setChatSessionId(sid);
+
+    // 加载对话列表
+    try {
+      const raw = localStorage.getItem(CONV_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setConversations(parsed);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // ============ 对话历史管理函数 ============
+  // 生成对话ID
+  const generateConvId = () => {
+    return `conv_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  };
+
+  // 生成标题（取第一条用户消息的前20字）
+  const generateTitle = (userMsg: string) => {
+    const text = userMsg.replace(/<[^>]*>/g, '').trim();
+    return text.length > 20 ? text.slice(0, 20) + '...' : text || '新对话';
+  };
+
+  // 创建新对话
+  const createNewConversation = () => {
+    const newConvId = generateConvId();
+    const now = new Date().toISOString();
+    const newConv: Conversation = {
+      id: newConvId,
+      title: '新对话',
+      messages: [{ role: 'ai', content: t.aiGreeting, time: '' }],
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    setConversations(prev => {
+      const updated = [newConv, ...prev].slice(0, MAX_CONVERSATIONS);
+      localStorage.setItem(CONV_STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+    setCurrentConvId(newConvId);
+    setMessages([{ role: 'ai', content: t.aiGreeting, time: '' }]);
+    setChatSessionId(newConvId);
+    sessionStorage.setItem('__chat_session_id__', newConvId);
+    message.success('已创建新对话');
+  };
+
+  // 切换对话
+  const switchConversation = (convId: string) => {
+    const conv = conversations.find(c => c.id === convId);
+    if (!conv) return;
+
+    if (currentConvId && currentConvId !== convId) {
+      saveCurrentConvMessages();
+    }
+
+    setCurrentConvId(convId);
+    setMessages(conv.messages.length > 0 ? conv.messages : [{ role: 'ai', content: t.aiGreeting, time: '' }]);
+    setChatSessionId(convId);
+    sessionStorage.setItem('__chat_session_id__', convId);
+    setHistoryVisible(false);
+  };
+
+  // 删除对话
+  const deleteConversation = (convId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm('确定要删除这个对话吗？')) return;
+
+    setConversations(prev => {
+      const updated = prev.filter(c => c.id !== convId);
+      localStorage.setItem(CONV_STORAGE_KEY, JSON.stringify(updated));
+      if (currentConvId === convId) {
+        if (updated.length > 0) {
+          setTimeout(() => switchConversation(updated[0].id), 0);
+        } else {
+          setTimeout(() => createNewConversation(), 0);
+        }
+      }
+      return updated;
+    });
+  };
+
+  // 保存当前对话消息到存储
+  const saveCurrentConvMessages = () => {
+    if (!currentConvId) return;
+    setConversations(prev => {
+      const updated = prev.map(c => {
+        if (c.id === currentConvId) {
+          return { ...c, messages, updatedAt: new Date().toISOString() };
+        }
+        return c;
+      });
+      localStorage.setItem(CONV_STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // 更新当前对话的标题（第一条用户消息）
+  const updateCurrentConvTitle = (userMsg: string) => {
+    if (!currentConvId) return;
+    // 检查当前对话标题是否是默认的"新对话"，只有默认标题才更新
+    const currentConv = conversations.find(c => c.id === currentConvId);
+    if (currentConv && currentConv.title !== '新对话') return;
+    const title = generateTitle(userMsg);
+    setConversations(prev => {
+      const updated = prev.map(c => {
+        if (c.id === currentConvId) {
+          return { ...c, title };
+        }
+        return c;
+      });
+      localStorage.setItem(CONV_STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // Load history from localStorage on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('knowledge_ip_history');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setHistoryList(parsed);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Detect sessionStorage flags for continuing/editing from drafts page
+  useEffect(() => {
+    const continueId = sessionStorage.getItem('__continue_project_id__');
+    const editId = sessionStorage.getItem('__edit_project_id__');
+
+    if (continueId || editId) {
+      const raw = localStorage.getItem('knowledge_ip_projects');
+      if (raw) {
+        try {
+          const projects = JSON.parse(raw);
+          const project = projects.find((p: { id: string }) => p.id === (continueId || editId));
+          if (project) {
+            setCourseDoc(project.courseDoc);
+            setHasStarted(true);
+            setLoadedProjectId(project.id);
+            if (continueId) {
+              // Go to step3 (module selection)
+              setStep('step3');
+              setShowDocPanel(false);
+            } else {
+              // Go to step2 (document editing)
+              setStep('document');
+              setShowDocPanel(true);
+              setEditMode(false);
+              // Set a message indicating project was loaded
+              const loadedMsg: Message = {
+                role: 'ai',
+                content: `已加载项目「${project.name}」。\n可点击右上角「编辑」按钮进入编辑模式，或继续修改课程内容。`,
+                time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+              };
+              setMessages([loadedMsg]);
+            }
+          }
+        } catch {
+          // ignore parse errors
+        }
+      }
+      sessionStorage.removeItem('__continue_project_id__');
+      sessionStorage.removeItem('__edit_project_id__');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const generateCourseDoc = (topic: string): CourseDocument => {
+    return {
+      title: topic,
+      subject: '信息技术',
+      grade: '大学一年级',
+      duration: 60,
+      teachingGoal: '通过本课程的学习，学生能够掌握Python的基本语法和编程思想，为后续深入学习打下坚实基础。',
+      chapters: [
+        { id: '1', title: '第一章：Python入门', duration: 15, isKeyPoint: true, sections: [
+          { id: '1-1', title: '1.1 Python简介', content: '介绍Python的发展历史和特点', summary: '了解Python语言背景', keyPoints: ['Python历史', '语言特点', '应用领域'], isKeyPoint: true, duration: 5 },
+          { id: '1-2', title: '1.2 环境搭建', content: '安装Python和配置开发环境', summary: '完成开发环境准备', keyPoints: ['安装Python', '配置IDE'], isKeyPoint: false, duration: 10 },
+        ]},
+        { id: '2', title: '第二章：数据类型与变量', duration: 20, isKeyPoint: true, sections: [
+          { id: '2-1', title: '2.1 基本数据类型', content: '学习整数、浮点数、字符串等基本数据类型', summary: '掌握基本数据类型', keyPoints: ['int整数', 'float浮点数', 'str字符串'], isKeyPoint: true, duration: 10 },
+          { id: '2-2', title: '2.2 变量与运算符', content: '学习变量声明、赋值以及运算符使用', summary: '理解变量和运算符', keyPoints: ['变量赋值', '算术运算符', '比较运算符'], isKeyPoint: false, duration: 10 },
+        ]},
+        { id: '3', title: '第三章：控制流程', duration: 25, isKeyPoint: false, sections: [
+          { id: '3-1', title: '3.1 条件语句', content: '学习if-elif-else条件语句', summary: '掌握条件判断', keyPoints: ['if语句', 'elif多条件', '嵌套条件'], isKeyPoint: true, duration: 12 },
+          { id: '3-2', title: '3.2 循环语句', content: '学习for和while循环', summary: '掌握循环结构', keyPoints: ['for循环', 'while循环', 'break/continue'], isKeyPoint: false, duration: 13 },
+        ]},
+      ],
+    };
+  };
+
+  const handleMouseDown = () => {
+    setIsDragging(true);
+    document.body.style.userSelect = 'none';
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      e.preventDefault();
+      const rect = containerRef.current.getBoundingClientRect();
+      const ratio = ((e.clientX - rect.left) / rect.width) * 100;
+      setSplitRatio(Math.min(Math.max(ratio, 20), 80));
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  useEffect(() => {
+    const handleDocumentMouseUp = () => {
+      if (!editMode) return;
+      const selection = window.getSelection();
+      const text = selection?.toString().trim() || '';
+      if (text && text.length > 0) {
+        if (text !== lastSelectedTextRef.current) {
+          lastSelectedTextRef.current = text;
+          setSelectedText(text);
+          const range = selection?.getRangeAt(0);
+          if (range) {
+            const r = range.getBoundingClientRect();
+            const panelRect = docPanelRef.current?.getBoundingClientRect();
+            if (panelRect) {
+              setSelectionPos({ x: r.left - panelRect.left, y: r.bottom - panelRect.top });
+            }
+          }
+          setShowAiPopup(true);
+          setAiGeneratedContent('');
+        }
+      } else {
+        lastSelectedTextRef.current = '';
+        setShowAiPopup(false);
+      }
+    };
+    document.addEventListener('mouseup', handleDocumentMouseUp);
+    return () => document.removeEventListener('mouseup', handleDocumentMouseUp);
+  }, [editMode]);
+
+  // 页面刷新或关闭前保存当前对话
+  useEffect(() => {
+    const handleBeforeUnload = () => saveCurrentConvMessages();
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [messages, currentConvId]);
+
+  const handleTeachingGoalSelect = (e: React.MouseEvent<HTMLTextAreaElement>) => {
+    const textarea = e.target as HTMLTextAreaElement;
+    const text = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd).trim();
+    if (text && text.length > 0) {
+      lastSelectedTextRef.current = text;
+      setSelectedText(text);
+      const panelRect = docPanelRef.current?.getBoundingClientRect();
+      if (panelRect) setSelectionPos({ x: 50, y: 100 });
+      setShowAiPopup(true);
+      setAiGeneratedContent('');
+    }
+  };
+
+  const handleAiRegenerate = () => {
+    if (!selectedText) return;
+    setRegenerating(true);
+    setTimeout(() => {
+      setAiGeneratedContent(`[AI重写版] ${selectedText}（这是AI生成的新内容，点击确认采用）`);
+      setRegenerating(false);
+    }, 1000);
+  };
+
+  const confirmAiContent = () => {
+    if (!aiGeneratedContent) return;
+    message.success('AI内容已生成，请复制使用：' + aiGeneratedContent);
+    setShowAiPopup(false);
+    setSelectedText('');
+    lastSelectedTextRef.current = '';
+    setAiGeneratedContent('');
+  };
+
+  const cancelAiContent = () => {
+    setShowAiPopup(false);
+    setSelectedText('');
+    lastSelectedTextRef.current = '';
+    setAiGeneratedContent('');
+  };
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+    const userInput = input.trim();
+    const userMsg: Message = { role: 'user', content: userInput, time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+    setMessages((prev) => [...prev, userMsg]);
+    setInput('');
+
+    // 保存用户消息并更新标题（针对当前对话）
+    saveCurrentConvMessages();
+    updateCurrentConvTitle(userInput);
+
+    // Intent detection: generation keywords
+    const generationPatterns = [
+      /生成.*课程/, /创建.*大纲/, /设计.*课程/, /制作.*课程/,
+      /帮我.*课程/, /给我.*课程/, /课程.*大纲/, /创建.*课程/, /设计.*大纲/,
+      /需要.*大纲/, /制定.*大纲/,
+    ];
+    const isGenerationIntent = generationPatterns.some(p => p.test(userInput));
+
+    // Handle pause during generation
+    if (isGeneratingOutline && !isPaused) {
+      setIsPaused(true);
+      const aiMsg: Message = { role: 'ai', content: '已暂停生成。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+      setMessages((prev) => [...prev, aiMsg]);
+      return;
+    }
+
+    if (['返回上一步', '重新修改', '回到之前'].includes(userInput)) {
+      if (prevDoc) {
+        setCourseDoc(prevDoc);
+        const aiMsg: Message = { role: 'ai', content: '已恢复上一版本内容。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+        setMessages((prev) => [...prev, aiMsg]);
+      } else {
+        const aiMsg: Message = { role: 'ai', content: '暂无上一步可返回。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+        setMessages((prev) => [...prev, aiMsg]);
+      }
+      return;
+    }
+
+    if (userInput === '确认文档') {
+      if (courseDoc) {
+        setStep('preview');
+        setEditMode(false);
+        const aiMsg: Message = { role: 'ai', content: '已进入预览模式。输入"确认最终方案"完成设计。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+        setMessages((prev) => [...prev, aiMsg]);
+      }
+      return;
+    }
+
+    // Special commands
+    if (userInput === '确认文档' || userInput === '确认方案' || userInput === '进入下一步' || userInput === '下一步') {
+      if (courseDoc) {
+        setStep('module');
+        const aiMsg: Message = { role: 'ai', content: '✅ 已进入内容生成阶段！请勾选需要生成的模块（教案、PPT、习题等），然后点击"开始生成"按钮。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+        setMessages((prev) => [...prev, aiMsg]);
+      } else {
+        const aiMsg: Message = { role: 'ai', content: '请先生成课程大纲，再进入下一步。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+        setMessages((prev) => [...prev, aiMsg]);
+      }
+      return;
+    }
+
+    if (userInput === '编辑' || userInput === '修改课程' || userInput === '调整课程') {
+      if (courseDoc) {
+        setEditMode(true);
+        setStep('document');
+        const aiMsg: Message = { role: 'ai', content: '已进入编辑模式！你可以在左侧面板修改课程标题、学科、学段、课时、章节等信息。修改完成后说"完成编辑"保存。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+        setMessages((prev) => [...prev, aiMsg]);
+      } else {
+        const aiMsg: Message = { role: 'ai', content: '还没有课程大纲可编辑，请先输入课程主题生成大纲。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+        setMessages((prev) => [...prev, aiMsg]);
+      }
+      return;
+    }
+
+    if (userInput === '完成编辑' || userInput === '保存编辑') {
+      if (editMode) {
+        setEditMode(false);
+        const aiMsg: Message = { role: 'ai', content: '✅ 课程大纲已保存！输入"下一步"进入内容生成阶段。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+        setMessages((prev) => [...prev, aiMsg]);
+      }
+      return;
+    }
+
+    // Generation intent -> trigger outline generation
+    if (isGenerationIntent && !courseDoc) {
+      setStep('document');
+      setShowDocPanel(true);
+      setIsGeneratingOutline(true);
+      setIsPaused(false);
+      setStreamingPreview('');
+      setLoadedProjectId(null);
+      setPrevDoc(null);
+      setEditMode(false);
+
+      const aiLoadingMsg: Message = { role: 'ai', content: '正在使用AI生成课程大纲，请稍候...\n', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+      setMessages((prev) => {
+        const newMsgs = [...prev, aiLoadingMsg];
+        loadingMsgIndexRef.current = newMsgs.length - 1;
+        return newMsgs;
+      });
+
+      try {
+        let fullText = '';
+        const doc = await generateCourseOutlineStream(userInput, (chunk) => {
+          fullText += chunk;
+          setMessages((prev) => {
+            const updated = [...prev];
+            const idx = loadingMsgIndexRef.current;
+            if (idx !== null && updated[idx] && updated[idx].role === 'ai') {
+              updated[idx] = {
+                ...updated[idx],
+                content: updated[idx].content + chunk,
+              };
+            }
+            return updated;
+          });
+        });
+        setCourseDoc(doc);
+        setIsGeneratingOutline(false);
+        setStreamingPreview('');
+        // 保存到记忆
+        try {
+          await fetch('/api/memory/save-course', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ course: doc, session_id: `course_${Date.now()}` }),
+          });
+        } catch { /* silent fail */ }
+
+        // 保存到草稿箱（Flask API）
+        try {
+          await fetch('/api/drafts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: `course_${Date.now()}`,
+              name: doc.title || userInput,
+              createdAt: new Date().toISOString(),
+              courseDoc: doc,
+              contents: [],
+            }),
+          });
+        } catch { /* silent fail */ }
+      } catch (err) {
+        setIsGeneratingOutline(false);
+        setStreamingPreview('');
+        const doc = generateCourseDoc(userInput);
+        setCourseDoc(doc);
+        const aiMsg: Message = { role: 'ai', content: `✅ 课程大纲已生成（默认模板）。输入"下一步"进入内容生成，或继续调整。输入"编辑"可修改课程信息。`, time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+        setMessages((prev) => [...prev.slice(0, -1), aiMsg]);
+        // 保存到记忆
+        try {
+          await fetch('/api/memory/save-course', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ course: doc, session_id: `course_${Date.now()}` }),
+          });
+        } catch { /* silent fail */ }
+
+        // 保存到草稿箱（Flask API）
+        try {
+          await fetch('/api/drafts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: `course_${Date.now()}`,
+              name: doc.title || userInput,
+              createdAt: new Date().toISOString(),
+              courseDoc: doc,
+              contents: [],
+            }),
+          });
+        } catch { /* silent fail */ }
+      }
+    } else if (courseDoc) {
+      // Normal chat or modification - call classmate backend
+      setPrevDoc(JSON.parse(JSON.stringify(courseDoc)));
+      setIsGeneratingOutline(true);
+
+      // 记录请求发起时的对话ID，用于竞态处理
+      const requestConvId = currentConvId;
+      requestConvIdRef.current = requestConvId;
+
+      const MAX_RETRIES = 2;
+      let lastError: Error | null = null;
+      let success = false;
+
+      for (let retryCount = 0; retryCount <= MAX_RETRIES; retryCount++) {
+        if (retryCount > 0) {
+          // 等待1秒后重试
+          await new Promise(r => setTimeout(r, 1000));
+          // 移除错误消息
+          setMessages((prev) => {
+            const updated = [...prev];
+            if (updated.length > 0 && updated[updated.length - 1].role === 'ai' &&
+                updated[updated.length - 1].content.includes('抱歉')) {
+              return updated.slice(0, -1);
+            }
+            return updated;
+          });
+          // 重新显示打字指示器
+          setMessages((prev) => [...prev, { role: 'ai', content: '🔄 AI正在输入...', time: '' }]);
+          typingIndicatorMsgIndexRef.current = null;
+        }
+
+        // 打字指示器消息
+        setMessages((prev) => {
+          const newMsgs = [...prev, { role: 'ai', content: '🔄 AI正在输入...', time: '' }];
+          typingIndicatorMsgIndexRef.current = newMsgs.length - 1;
+          return newMsgs;
+        });
+
+        try {
+          const response = await fetch('http://127.0.0.1:5000/api/chat/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userInput, session_id: chatSessionId }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`请求失败，状态码：${response.status}`);
+          }
+
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
+          let fullResponse = '';
+          let jsonBuffer = '';
+          let firstChunk = true;
+
+          if (reader) {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              const rawChunk = decoder.decode(value, { stream: true });
+              jsonBuffer += rawChunk;
+
+              const lines: string[] = [];
+              let lineEnd: number;
+              // SSE以\n\n分帧，兼容单\n
+              while (true) {
+                const doubleEnd = jsonBuffer.indexOf('\n\n');
+                const singleEnd = jsonBuffer.indexOf('\n');
+                if (doubleEnd !== -1 || singleEnd !== -1) {
+                  if (doubleEnd !== -1 && (singleEnd === -1 || doubleEnd < singleEnd)) {
+                    lineEnd = doubleEnd;
+                    lines.push(jsonBuffer.substring(0, lineEnd));
+                    jsonBuffer = jsonBuffer.substring(lineEnd + 2);
+                  } else if (singleEnd !== -1) {
+                    lineEnd = singleEnd;
+                    lines.push(jsonBuffer.substring(0, lineEnd));
+                    jsonBuffer = jsonBuffer.substring(lineEnd + 1);
+                  }
+                } else {
+                  break;
+                }
+              }
+
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const jsonStr = line.slice(6).trim();
+                if (!jsonStr) continue;
+                try {
+                  const data = JSON.parse(jsonStr);
+
+                  // 竞态处理：检查对话是否已切换
+                  if (currentConvId !== requestConvIdRef.current) {
+                    success = true;
+                    break;
+                  }
+
+                  if (data.done) {
+                    success = true;
+                    break;
+                  }
+                  if (data.chunk !== undefined) {
+                    // 竞态处理
+                    if (currentConvId !== requestConvIdRef.current) continue;
+                    if (firstChunk) {
+                      firstChunk = false;
+                      // 收到第一个chunk，移除打字指示器
+                      setMessages((prev) => {
+                        const updated = [...prev];
+                        const idx = typingIndicatorMsgIndexRef.current;
+                        if (idx !== null && updated[idx] && updated[idx].content === '🔄 AI正在输入...') {
+                          updated[idx] = { ...updated[idx], content: data.chunk, time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+                        } else {
+                          updated[updated.length - 1] = { ...updated[updated.length - 1], content: data.chunk, time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+                        }
+                        return updated;
+                      });
+                    } else {
+                      fullResponse += data.chunk;
+                      setMessages((prev) => {
+                        const updated = [...prev];
+                        updated[updated.length - 1] = { ...updated[updated.length - 1], content: fullResponse };
+                        return updated;
+                      });
+                    }
+                  }
+                } catch {
+                  jsonBuffer = line + '\n' + jsonBuffer;
+                }
+              }
+              if (success || currentConvId !== requestConvIdRef.current) break;
+            }
+          }
+
+          setIsGeneratingOutline(false);
+          if (success || currentConvId !== requestConvIdRef.current) break;
+
+          // 清理打字指示器
+          const typingIdx = typingIndicatorMsgIndexRef.current;
+          if (typingIdx !== null) {
+            setMessages((prev) => {
+              const updated = [...prev];
+              if (updated[typingIdx] && updated[typingIdx].content === '🔄 AI正在输入...') {
+                return updated.slice(0, -1);
+              }
+              return updated;
+            });
+            typingIndicatorMsgIndexRef.current = null;
+          }
+
+          setMessages((prev) => {
+            const updated = [...prev];
+            if (updated[updated.length - 1] && !updated[updated.length - 1].content) {
+              updated[updated.length - 1] = { ...updated[updated.length - 1], content: '好的，我明白了。' };
+            }
+            return updated;
+          });
+          break;
+        } catch (err) {
+          lastError = err as Error;
+          setIsGeneratingOutline(false);
+          const typingIdx = typingIndicatorMsgIndexRef.current;
+          if (typingIdx !== null) {
+            setMessages((prev) => {
+              const updated = [...prev];
+              if (updated[typingIdx] && updated[typingIdx].content === '🔄 AI正在输入...') {
+                return updated.slice(0, -1);
+              }
+              return updated;
+            });
+            typingIndicatorMsgIndexRef.current = null;
+          }
+          if (retryCount >= MAX_RETRIES) {
+            const aiMsg: Message = { role: 'ai', content: '抱歉，AI服务暂时不可用。请检查后端服务是否启动（端口5000）。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+            setMessages((prev) => [...prev, aiMsg]);
+          }
+        }
+        if (retryCount < MAX_RETRIES && currentConvId === requestConvIdRef.current) continue;
+        break;
+      }
+    } else {
+      // No course yet, not a generation intent -> call classmate backend for chat
+      setIsGeneratingOutline(true);
+
+      const requestConvId = currentConvId;
+      requestConvIdRef.current = requestConvId;
+
+      const MAX_RETRIES = 2;
+      let lastError: Error | null = null;
+      let success = false;
+
+      for (let retryCount = 0; retryCount <= MAX_RETRIES; retryCount++) {
+        if (retryCount > 0) {
+          await new Promise(r => setTimeout(r, 1000));
+          setMessages((prev) => {
+            const updated = [...prev];
+            if (updated.length > 0 && updated[updated.length - 1].role === 'ai' &&
+                (updated[updated.length - 1].content.includes('抱歉') || updated[updated.length - 1].content === '🔄 AI正在输入...')) {
+              return updated.slice(0, -1);
+            }
+            return updated;
+          });
+          setMessages((prev) => {
+            const newMsgs = [...prev, { role: 'ai', content: '🔄 AI正在输入...', time: '' }];
+            typingIndicatorMsgIndexRef.current = newMsgs.length - 1;
+            return newMsgs;
+          });
+        }
+
+        setMessages((prev) => {
+          const newMsgs = [...prev, { role: 'ai', content: '🔄 AI正在输入...', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) }];
+          typingIndicatorMsgIndexRef.current = newMsgs.length - 1;
+          return newMsgs;
+        });
+
+        try {
+          const response = await fetch('http://127.0.0.1:5000/api/chat/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userInput, session_id: chatSessionId }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`请求失败，状态码：${response.status}`);
+          }
+
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
+          let fullResponse = '';
+          let jsonBuffer = '';
+          let firstChunk = true;
+
+          if (reader) {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              const rawChunk = decoder.decode(value, { stream: true });
+              jsonBuffer += rawChunk;
+
+              const lines: string[] = [];
+              let lineEnd: number;
+              // SSE以\n\n分帧，兼容单\n
+              while (true) {
+                const doubleEnd = jsonBuffer.indexOf('\n\n');
+                const singleEnd = jsonBuffer.indexOf('\n');
+                if (doubleEnd !== -1 || singleEnd !== -1) {
+                  if (doubleEnd !== -1 && (singleEnd === -1 || doubleEnd < singleEnd)) {
+                    lineEnd = doubleEnd;
+                    lines.push(jsonBuffer.substring(0, lineEnd));
+                    jsonBuffer = jsonBuffer.substring(lineEnd + 2);
+                  } else if (singleEnd !== -1) {
+                    lineEnd = singleEnd;
+                    lines.push(jsonBuffer.substring(0, lineEnd));
+                    jsonBuffer = jsonBuffer.substring(lineEnd + 1);
+                  }
+                } else {
+                  break;
+                }
+              }
+
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const jsonStr = line.slice(6).trim();
+                if (!jsonStr) continue;
+                try {
+                  const data = JSON.parse(jsonStr);
+
+                  if (currentConvId !== requestConvIdRef.current) {
+                    success = true;
+                    break;
+                  }
+
+                  if (data.done) {
+                    success = true;
+                    break;
+                  }
+                  if (data.chunk !== undefined) {
+                    if (currentConvId !== requestConvIdRef.current) continue;
+                    if (firstChunk) {
+                      firstChunk = false;
+                      setMessages((prev) => {
+                        const updated = [...prev];
+                        const idx = typingIndicatorMsgIndexRef.current;
+                        if (idx !== null && updated[idx] && updated[idx].content === '🔄 AI正在输入...') {
+                          updated[idx] = { ...updated[idx], content: data.chunk, time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+                        } else {
+                          updated[updated.length - 1] = { ...updated[updated.length - 1], content: data.chunk, time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+                        }
+                        return updated;
+                      });
+                    } else {
+                      fullResponse += data.chunk;
+                      setMessages((prev) => {
+                        const updated = [...prev];
+                        updated[updated.length - 1] = { ...updated[updated.length - 1], content: fullResponse };
+                        return updated;
+                      });
+                    }
+                  }
+                } catch {
+                  jsonBuffer = line + '\n' + jsonBuffer;
+                }
+              }
+              if (success || currentConvId !== requestConvIdRef.current) break;
+            }
+          }
+
+          setIsGeneratingOutline(false);
+          if (success || currentConvId !== requestConvIdRef.current) break;
+
+          const typingIdx = typingIndicatorMsgIndexRef.current;
+          if (typingIdx !== null) {
+            setMessages((prev) => {
+              const updated = [...prev];
+              if (updated[typingIdx] && updated[typingIdx].content === '🔄 AI正在输入...') {
+                return updated.slice(0, -1);
+              }
+              return updated;
+            });
+            typingIndicatorMsgIndexRef.current = null;
+          }
+
+          if (!fullResponse) {
+            setMessages((prev) => {
+              const updated = [...prev];
+              updated[updated.length - 1] = { ...updated[updated.length - 1], content: '你好！请告诉我你想创建什么课程，比如"帮我设计一个Python入门课程"。' };
+              return updated;
+            });
+          }
+          break;
+        } catch (err) {
+          lastError = err as Error;
+          setIsGeneratingOutline(false);
+          const typingIdx = typingIndicatorMsgIndexRef.current;
+          if (typingIdx !== null) {
+            setMessages((prev) => {
+              const updated = [...prev];
+              if (updated[typingIdx] && updated[typingIdx].content === '🔄 AI正在输入...') {
+                return updated.slice(0, -1);
+              }
+              return updated;
+            });
+            typingIndicatorMsgIndexRef.current = null;
+          }
+          if (retryCount >= MAX_RETRIES) {
+            const aiMsg: Message = { role: 'ai', content: '抱歉，AI服务暂时不可用。请确保后端服务已启动在端口5000。', time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) };
+            setMessages((prev) => [...prev, aiMsg]);
+          }
+        }
+        if (retryCount < MAX_RETRIES && currentConvId === requestConvIdRef.current) continue;
+        break;
+      }
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const toggleChapterKey = (chapterId: string) => {
+    if (!courseDoc) return;
+    setCourseDoc({ ...courseDoc, chapters: courseDoc.chapters.map(c => c.id === chapterId ? { ...c, isKeyPoint: !c.isKeyPoint } : c) });
+  };
+
+  const toggleSectionKey = (chapterId: string, sectionId: string) => {
+    if (!courseDoc) return;
+    setCourseDoc({ ...courseDoc, chapters: courseDoc.chapters.map(c => c.id !== chapterId ? c : { ...c, sections: c.sections.map(s => s.id === sectionId ? { ...s, isKeyPoint: !s.isKeyPoint } : s) }) });
+  };
+
+  const updateChapterDuration = (chapterId: string, duration: number) => {
+    if (!courseDoc) return;
+    setCourseDoc({ ...courseDoc, chapters: courseDoc.chapters.map(c => c.id === chapterId ? { ...c, duration } : c) });
+  };
+
+  const updateSectionDuration = (chapterId: string, sectionId: string, duration: number) => {
+    if (!courseDoc) return;
+    setCourseDoc({ ...courseDoc, chapters: courseDoc.chapters.map(c => c.id !== chapterId ? c : { ...c, sections: c.sections.map(s => s.id === sectionId ? { ...s, duration } : s) }) });
+  };
+
+  const startNew = () => {
+    setHasStarted(false);
+    setStep('input');
+    setCourseDoc(null);
+    setPrevDoc(null);
+    setEditMode(false);
+    setMessages([{ role: 'ai', content: t.aiAssistant + '\n' + t.tellMeWhat, time: '' }]);
+    setInput('');
+    message.success(t.newCreate + '！');
+  };
+
+  // ============ Step 3 Handler ============
+  const handleStep3Confirm = (modules: string[], audit: boolean) => {
+    setSelectedModules(modules);
+    setAuditEnabled(audit);
+    setReviewStatus('idle');
+    setReviewIssues([]);
+    setCompletedGenerationItems([]);
+    setStep('step4');
+  };
+
+  // ============ All Content Generated Handler (Step 4 complete → trigger review) ============
+  const handleAllContentGenerated = (items: GenerationItem[]) => {
+    setCompletedGenerationItems(items);
+
+    if (!auditEnabled) {
+      // Skip review, directly save
+      setReviewStatus('passed');
+      handleStep4Complete(items);
+      return;
+    }
+
+    // Start review
+    setReviewStatus('reviewing');
+
+    const contents = items.map(i => ({
+      title: i.label,
+      content: i.content || '',
+      type: CONTENT_TYPE_MAP[i.key] || i.label.replace('生成', ''),
+    }));
+
+    reviewContent(contents, courseDoc?.title || '未知课程')
+      .then(result => {
+        if (result.passed) {
+          setReviewStatus('passed');
+          // Auto-save after 1.5s delay
+          setTimeout(() => {
+            handleStep4Complete(items);
+          }, 1500);
+        } else {
+          setReviewStatus('failed');
+          setReviewIssues(result.issues);
+        }
+      })
+      .catch(() => {
+        // Review error — treat as passed to avoid blocking
+        setReviewStatus('passed');
+        setTimeout(() => {
+          handleStep4Complete(items);
+        }, 1500);
+      });
+  };
+
+  // Handle "AI重新生成" — re-run generation for failed items only
+  const handleRegenerateFailed = () => {
+    setReviewStatus('idle');
+    setReviewIssues([]);
+    // Re-trigger Step4 with the same modules
+    setStep('step3');
+  };
+
+  // Handle "手动确认" — skip review issues and save anyway
+  const handleManualConfirm = () => {
+    setReviewStatus('passed');
+    handleStep4Complete(completedGenerationItems);
+  };
+
+  // ============ History Loading Handler ============
+  const handleLoadFromHistory = (item: HistoryItem2) => {
+    console.log('[DEBUG] handleLoadFromHistory called with item:', item.id, item.topic);
+
+    // Try to get courseDoc from history item first, then from knowledge_ip_projects
+    let targetCourseDoc: CourseDocument | null = item.courseDoc || null;
+
+    if (!targetCourseDoc) {
+      try {
+        const raw = localStorage.getItem('knowledge_ip_projects');
+        if (raw) {
+          const projects = JSON.parse(raw);
+          const project = projects.find((p: { id: string }) => p.id === item.id);
+          if (project) {
+            targetCourseDoc = project.courseDoc || null;
+            console.log('[DEBUG] Loaded courseDoc from knowledge_ip_projects:', targetCourseDoc ? targetCourseDoc.title : 'null');
+          }
+        }
+      } catch (e) {
+        console.error('[DEBUG] Failed to load project from knowledge_ip_projects:', e);
+      }
+    } else {
+      console.log('[DEBUG] Using courseDoc from history item:', targetCourseDoc.title);
+    }
+
+    if (!targetCourseDoc) {
+      message.error('无法加载该项目，课程文档数据已丢失');
+      return;
+    }
+
+    // Restore the editor state
+    setCourseDoc(targetCourseDoc);
+    setHasStarted(true);
+    setStep('document');
+    setShowDocPanel(true);
+    setEditMode(false);
+    setLoadedProjectId(item.id); // Mark that we're editing an existing project
+
+    // Set messages to indicate the project was loaded
+    const loadedMsg: Message = {
+      role: 'ai',
+      content: `已加载历史项目「${item.topic}」。\n可点击右上角「编辑」按钮进入编辑模式，或继续修改课程内容。`,
+      time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+    };
+    setMessages(prev => {
+      // Replace the initial message with loaded state
+      if (prev.length === 1 && prev[0].role === 'ai' && prev[0].content?.includes(t.aiAssistant)) {
+        return [loadedMsg];
+      }
+      return [...prev, loadedMsg];
+    });
+
+    setHistoryVisible(false);
+    message.success('已加载历史项目');
+  };
+
+  const handleStep4Complete = (items: GenerationItem[]) => {
+    console.log('[DEBUG handleStep4Complete] START - items:', JSON.stringify(items.map(i => ({ key: i.key, status: i.status, contentLength: i.content?.length, contentPreview: i.content?.slice(0, 50) }))));
+    if (!courseDoc) {
+      console.error('[DEBUG] handleStep4Complete: courseDoc is null!');
+      return;
+    }
+
+    // Build project object
+    // Use loadedProjectId if available (editing existing project from history), otherwise create new
+    const projectId = loadedProjectId || `proj_${Date.now()}`;
+    const isUpdatingHistory = !!loadedProjectId;
+    const projectName = courseDoc.title;
+    const createdAt = isUpdatingHistory
+      ? new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+      : new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+    const contents: Array<{
+      id: string;
+      type: string;
+      title: string;
+      status: string;
+      content: string;
+      createdAt: string;
+    }> = items.map(i => ({
+      id: `content_${Date.now()}_${i.key}`,
+      type: CONTENT_TYPE_MAP[i.key] || i.label.replace('生成', ''),
+      title: i.label,
+      status: i.status === 'failed' ? 'pending' : 'pending',
+      content: (i.status === 'completed' && i.content) ? i.content : `（${i.label}内容待补充）`,
+      createdAt,
+    }));
+
+    console.log('[DEBUG] handleStep4Complete called with', items.length, 'items,', contents.length, 'valid contents');
+    console.log('[DEBUG] courseDoc title:', courseDoc.title, 'chapters:', courseDoc.chapters.length);
+
+    // If updating existing project, merge old contents with new ones
+    let finalContents = contents;
+    if (isUpdatingHistory) {
+      try {
+        const raw = localStorage.getItem('knowledge_ip_projects');
+        const existing: typeof project[] = raw ? JSON.parse(raw) : [];
+        const oldProject = existing.find(p => p.id === projectId);
+        if (oldProject && oldProject.contents) {
+          // Merge: new contents replace old ones with same type, old ones with different types stay
+          const oldContentsMap = new Map(oldProject.contents.map(c => [c.type, c]));
+          for (const newItem of contents) {
+            oldContentsMap.set(newItem.type, newItem);
+          }
+          finalContents = Array.from(oldContentsMap.values());
+          console.log('[DEBUG] Merged contents: old', oldProject.contents.length, '+ new', contents.length, '=', finalContents.length);
+        }
+      } catch (e) {
+        console.error('[DEBUG] Failed to merge old contents:', e);
+      }
+    }
+
+    // 构建 files 数组：从已完成的 items 中提取文件信息
+    const moduleKeyToFileType = (key: string): ProjectFile['type'] | null => {
+      const map: Record<string, ProjectFile['type']> = {
+        ppt: 'ppt',
+        'lecture-documentation': 'lecture',
+        lecture: 'lecture',
+        'content_image': 'content_image',
+        'content_audio': 'content_audio',
+      };
+      return map[key] ?? null;
+    };
+
+    const files: ProjectFile[] = [];
+    for (const item of items) {
+      if (item.status === 'completed' && (item.filePath || item.fileUrl)) {
+        const fileType = moduleKeyToFileType(item.key);
+        if (fileType) {
+          files.push({
+            type: fileType,
+            filename: item.fileName || (item.fileUrl ? item.fileUrl.split('/').pop() || 'file' : 'file'),
+            path: item.filePath || '',
+            url: item.fileUrl || item.content || '',
+          });
+        }
+      }
+    }
+
+    const project = {
+      id: projectId,
+      name: projectName,
+      createdAt,
+      courseDoc,
+      contents: finalContents,
+      files,
+    };
+
+    // Always save project even if contents is empty (to avoid losing data)
+    try {
+      const raw = localStorage.getItem('knowledge_ip_projects');
+      const existing: typeof project[] = raw ? JSON.parse(raw) : [];
+      if (isUpdatingHistory) {
+        // Replace existing project instead of creating new one
+        const idx = existing.findIndex(p => p.id === projectId);
+        if (idx !== -1) {
+          existing[idx] = project;
+          console.log('[DEBUG] Updated existing project in localStorage:', { projectId, name: projectName, contentsCount: contents.length, idx });
+        } else {
+          existing.unshift(project);
+          console.log('[DEBUG] Project not found in existing, prepending:', { projectId });
+        }
+      } else {
+        existing.unshift(project);
+        console.log('[DEBUG] Saved new project to localStorage:', { projectId, name: projectName, contentsCount: contents.length, total: existing.length });
+      }
+      localStorage.setItem('knowledge_ip_projects', JSON.stringify(existing));
+    } catch (e) {
+      console.error('[DEBUG] Failed to save to localStorage:', e);
+    }
+
+    // Save to history records (include courseDoc for loading)
+    try {
+      const historyItem: HistoryItem2 = {
+        id: projectId,
+        topic: projectName,
+        preview: `${contents.length}项内容`,
+        createdAt,
+        courseDoc, // Store courseDoc so we can restore the editor state
+      };
+      const historyRaw = localStorage.getItem('knowledge_ip_history');
+      const historyExisting: HistoryItem2[] = historyRaw ? JSON.parse(historyRaw) : [];
+      if (isUpdatingHistory) {
+        // Replace existing history item instead of creating new one
+        const idx = historyExisting.findIndex(h => h.id === projectId);
+        if (idx !== -1) {
+          historyExisting[idx] = historyItem;
+          console.log('[DEBUG] Updated existing history item:', { projectId, idx });
+        } else {
+          historyExisting.unshift(historyItem);
+          console.log('[DEBUG] History item not found, prepending:', { projectId });
+        }
+      } else {
+        historyExisting.unshift(historyItem);
+        console.log('[DEBUG] Saved new history to localStorage:', { historyItem, total: historyExisting.length });
+      }
+      localStorage.setItem('knowledge_ip_history', JSON.stringify(historyExisting));
+      setHistoryList(historyExisting);
+    } catch (e) {
+      console.error('[DEBUG] Failed to save history:', e);
+    }
+
+    // Use sessionStorage to pass the latest project to drafts page (survives router.push)
+    try {
+      sessionStorage.setItem('__latest_project__', JSON.stringify(project));
+    } catch { /* ignore */ }
+
+    message.success('已保存到草稿箱！');
+    console.log('[DEBUG FINAL] Navigating to drafts with', contents.length, 'contents, projectId:', projectId);
+    // Use hard navigation to avoid React Strict Mode double-effect issue
+    window.location.href = '/drafts';
+  };
+
+  // ============ Step 3 and Step 4 renders ============
+  if (step === 'step3' && courseDoc) {
+    return (
+      <Step3Modules
+        courseDoc={courseDoc}
+
+        onConfirm={handleStep3Confirm}
+        onBack={() => { setStep('document'); setShowDocPanel(true); }}
+      />
+    );
+  }
+
+  if (step === 'step4' && courseDoc) {
+    return (
+      <>
+        <Step4Generation
+          selectedModules={selectedModules}
+          courseDoc={courseDoc}
+          onComplete={handleAllContentGenerated}
+        />
+        {/* Review Status Overlay */}
+        {reviewStatus !== 'idle' && (
+          <div style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 100,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <div style={{
+              background: '#fff',
+              borderRadius: 12,
+              padding: 32,
+              maxWidth: 480,
+              width: '90%',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+            }}>
+              {reviewStatus === 'reviewing' && (
+                <>
+                  <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                    <LoadingOutlined style={{ fontSize: 40, color: '#1890ff' }} />
+                  </div>
+                  <div style={{ fontSize: 16, color: '#333', textAlign: 'center', fontWeight: 500, marginBottom: 8 }}>
+                    内容审核中
+                  </div>
+                  <div style={{ fontSize: 13, color: '#999', textAlign: 'center' }}>
+                    AI正在检查内容质量，请稍候...
+                  </div>
+                </>
+              )}
+              {reviewStatus === 'passed' && (
+                <>
+                  <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                    <div style={{ fontSize: 48, marginBottom: 8 }}>✅</div>
+                  </div>
+                  <div style={{ fontSize: 16, color: '#333', textAlign: 'center', fontWeight: 500, marginBottom: 8 }}>
+                    审核通过
+                  </div>
+                  <div style={{ fontSize: 13, color: '#999', textAlign: 'center' }}>
+                    内容已自动保存，正在跳转到草稿箱...
+                  </div>
+                </>
+              )}
+              {reviewStatus === 'failed' && (
+                <>
+                  <div style={{ fontSize: 16, color: '#333', fontWeight: 500, marginBottom: 16 }}>
+                    审核未通过
+                  </div>
+                  <div style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>发现问题：</div>
+                  <div style={{ background: '#fff2f0', borderRadius: 8, padding: '12px 16px', marginBottom: 24 }}>
+                    {reviewIssues.map((issue, i) => (
+                      <div key={i} style={{ fontSize: 13, color: '#ff4d4f', marginBottom: 4 }}>
+                        • {issue}
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+                    <Button size="large" onClick={handleRegenerateFailed}>
+                      AI重新生成
+                    </Button>
+                    <Button type="primary" size="large" onClick={handleManualConfirm}>
+                      手动确认
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // ============ Render: no course yet ============
+  if (!courseDoc) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', background: '#f5f5f5', height: '100vh', overflow: 'hidden' }}>
+        {/* Header */}
+        <div style={{ padding: '12px 24px', background: '#fff', borderBottom: '1px solid #e8e8e8', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+          <Button size="small" icon={<PlusOutlined />} onClick={createNewConversation}>新建对话</Button>
+          <Button size="small" icon={<ClockCircleOutlined />} onClick={() => setHistoryVisible(true)} style={{ marginLeft: 8 }}>历史记录</Button>
+          <div style={{ flex: 1 }} />
+        </div>
+
+        {/* Chat Messages */}
+        <div style={{ flex: 1, overflow: 'auto', padding: '16px 24px' }}>
+          {/* AI Welcome */}
+          <div style={{ display: 'flex', marginBottom: 16 }}>
+            <Avatar icon={<RobotOutlined />} style={{ background: '#1890ff', marginRight: 8, flexShrink: 0 }} />
+            <Card size="small" style={{ maxWidth: '75%', background: '#fff', borderRadius: '12px 12px 12px 4px' }} bodyStyle={{ padding: '10px 14px' }}>
+              <div style={{ whiteSpace: 'pre-wrap', fontSize: 14 }}>{t.aiAssistant}{'\n'}{t.tellMeWhat}</div>
+            </Card>
+          </div>
+
+          {/* Conversation History */}
+          {messages.map((msg, index) => (
+            <div key={index} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 12 }}>
+              {msg.role === 'ai' && <Avatar icon={<RobotOutlined />} style={{ background: '#1890ff', marginRight: 8, flexShrink: 0 }} />}
+              <Card size="small" style={{
+                maxWidth: '75%',
+                background: msg.role === 'user' ? '#1890ff' : '#fff',
+                color: msg.role === 'user' ? '#fff' : '#333',
+                borderRadius: msg.role === 'user' ? '12px 12px 4px 12px' : '12px 12px 12px 4px',
+              }} bodyStyle={{ padding: '10px 14px' }}>
+                <div style={{ whiteSpace: 'pre-wrap', fontSize: 14 }}>{msg.content}</div>
+              </Card>
+              {msg.role === 'user' && <Avatar icon={<UserOutlined />} style={{ background: '#52c41a', marginLeft: 8, flexShrink: 0 }} />}
+            </div>
+          ))}
+        </div>
+
+        {/* Input Bar */}
+        <div style={{ padding: '12px 24px', background: '#fff', borderTop: '1px solid #e8e8e8', flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+            <TextArea
+              rows={1}
+              placeholder={t.inputPlaceholder}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              style={{ flex: 1, borderRadius: 8, resize: 'none' }}
+              autoFocus
+              disabled={isGeneratingOutline}
+            />
+            <Button
+              type="primary"
+              icon={isGeneratingOutline ? <PauseOutlined /> : <SendOutlined />}
+              onClick={handleSend}
+              disabled={!input.trim() || isGeneratingOutline}
+            >
+              {isGeneratingOutline ? '暂停' : ''}
+            </Button>
+          </div>
+        </div>
+
+        {/* History Modal - 对话列表 */}
+        <Modal title="💬 对话列表" open={historyVisible} onCancel={() => setHistoryVisible(false)} footer={null} width={500}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+            <Button type="primary" size="small" icon={<PlusOutlined />} onClick={() => { createNewConversation(); setHistoryVisible(false); }}>新建对话</Button>
+          </div>
+          {conversations.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '24px 0', color: '#999' }}>暂无对话记录<br /><small>点击上方 + 新建对话</small></div>
+          ) : (
+            conversations.map((conv) => (
+              <Card
+                key={conv.id}
+                size="small"
+                style={{
+                  marginBottom: 8,
+                  cursor: 'pointer',
+                  border: conv.id === currentConvId ? '1px solid #1890ff' : '1px solid #f0f0f0',
+                  background: conv.id === currentConvId ? '#f0f7ff' : '#fff',
+                }}
+                hoverable
+                onClick={() => switchConversation(conv.id)}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <strong>{conv.title}</strong>
+                    <div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>{conv.messages.length} 条消息 · {new Date(conv.updatedAt).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })} {new Date(conv.updatedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</div>
+                  </div>
+                  <Button
+                    type="text"
+                    danger
+                    size="small"
+                    icon={<DeleteOutlined />}
+                    onClick={(e) => deleteConversation(conv.id, e)}
+                  />
+                </div>
+              </Card>
+            ))
+          )}
+        </Modal>
+      </div>
+    );
+  }
+
+  if (courseDoc) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#f5f5f5' }}>
+        {/* Top Nav */}
+        <div style={{ padding: '12px 24px', background: '#fff', borderBottom: '1px solid #e8e8e8', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Button size="small" icon={<PlusOutlined />} onClick={createNewConversation}>新建对话</Button>
+          <Button size="small" icon={<ClockCircleOutlined />} onClick={() => setHistoryVisible(true)}>历史记录</Button>
+          <div style={{ flex: 1 }} />
+        </div>
+
+        {/* Content Area */}
+        <div style={{ flex: 1, display: 'flex', overflow: 'hidden', height: 'calc(100vh - 56px)' }} ref={containerRef}>
+          {/* Left Chat */}
+          <div style={{ width: showDocPanel ? `${splitRatio}%` : '100%', display: 'flex', flexDirection: 'column', borderRight: showDocPanel ? '1px solid #e8e8e8' : 'none', overflow: 'hidden' }}>
+            <div style={{ flex: 1, overflow: 'auto', padding: '16px' }}>
+              {messages.map((msg, index) => (
+                <div key={index} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 12 }}>
+                  {msg.role === 'ai' && <Avatar icon={<RobotOutlined />} style={{ background: '#1890ff', marginRight: 8 }} />}
+                  <Card size="small" style={{ maxWidth: '80%', background: msg.role === 'user' ? '#1890ff' : '#fff', color: msg.role === 'user' ? '#fff' : '#333', borderRadius: 12 }} bodyStyle={{ padding: '10px 14px', whiteSpace: 'pre-wrap' }}>
+                    {msg.content}
+                  </Card>
+                  {msg.role === 'user' && <Avatar icon={<UserOutlined />} style={{ background: '#52c41a', marginLeft: 8 }} />}
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: '8px 16px', background: '#fff', borderTop: '1px solid #eee', flexShrink: 0 }}>
+              <div style={{ display: 'flex', gap: 8, userSelect: isDragging ? 'none' : 'auto' }}>
+                <TextArea rows={1} placeholder="输入修改指令..." value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} style={{ borderRadius: 8, flex: 1 }} autoSize={{ minRows: 1, maxRows: 4 }} />
+                {!showDocPanel && <Button onClick={() => setShowDocPanel(true)}>查看文档</Button>}
+                <Button type="primary" icon={isGeneratingOutline && !isPaused ? <PauseOutlined /> : <SendOutlined />} onClick={handleSend} disabled={!input.trim() && !isGeneratingOutline} />
+              </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          {showDocPanel && <div onMouseDown={handleMouseDown} style={{ width: 4, cursor: 'col-resize', background: isDragging ? '#1890ff' : '#eee' }} />}
+
+          {/* Right Document */}
+          {showDocPanel ? (
+            <div ref={docPanelRef} style={{
+              flex: isPanelMaximized ? 1 : (isPanelMinimized ? '0 0 40px' : 1),
+              overflow: isPanelMinimized ? 'hidden' : 'auto',
+              padding: isPanelMinimized ? 0 : '24px',
+              background: '#fff',
+              position: isPanelMaximized ? 'fixed' : 'relative',
+              top: isPanelMaximized ? 0 : undefined,
+              left: isPanelMaximized ? 0 : undefined,
+              width: isPanelMaximized ? '100vw' : undefined,
+              height: isPanelMaximized ? '100vh' : undefined,
+              zIndex: isPanelMaximized ? 1000 : undefined,
+              minWidth: isPanelMinimized ? 40 : undefined,
+              userSelect: isDragging ? 'none' : 'auto'
+            }}>
+              {/* Minimized narrow bar */}
+              {isPanelMinimized && (
+                <div style={{
+                  width: 40,
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#f5f5f5',
+                  cursor: 'pointer',
+                  borderLeft: '1px solid #e8e8e8'
+                }} onClick={() => setIsPanelMinimized(false)}>
+                  <span style={{ writingMode: 'vertical-rl', fontSize: 12, color: '#999' }}>大纲</span>
+                </div>
+              )}
+
+              {/* Top Right Buttons */}
+              {!isPanelMinimized && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, borderBottom: '1px solid #e8e8e8', paddingBottom: 12, justifyContent: 'flex-end' }}>
+                {/* Minimize: shrink to narrow strip */}
+                {!isPanelMaximized && (
+                  <Button type="text" icon={<ShrinkOutlined />} onClick={() => setIsPanelMinimized(true)} title="最小化" />
+                )}
+                {/* Maximize: full screen */}
+                {!isPanelMaximized && (
+                  <Button type="text" icon={<ExpandOutlined />} onClick={() => setIsPanelMaximized(true)} title="最大化" />
+                )}
+                {/* Restore: exit maximized or minimized */}
+                {(isPanelMaximized || isPanelMinimized) && (
+                  <Button type="text" icon={<ExpandOutlined />} onClick={() => { setIsPanelMaximized(false); setIsPanelMinimized(false); }} title="还原" />
+                )}
+                {editMode ? (
+                  <Button icon={<EyeOutlined />} onClick={() => setEditMode(false)}>预览</Button>
+                ) : (
+                  <Button type="default" icon={<EditOutlined />} onClick={() => setEditMode(true)}>编辑</Button>
+                )}
+                <span style={{ color: '#e8e8e8', margin: '0 4px' }}>|</span>
+                <Button type="text" icon={<span style={{ fontSize: 20, cursor: 'pointer', color: '#999' }}>×</span>} onClick={() => setShowDocPanel(false)} />
+              </div>
+              )}
+              {isGeneratingOutline ? (
+                streamingPreview ? (
+                  <div style={{ padding: '20px' }}>
+                    <div style={{ color: '#1890ff', marginBottom: 8, fontSize: 13 }}>🤖 AI正在生成大纲...</div>
+                    <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all', fontSize: 13, color: '#333', background: '#f5f5f5', padding: 16, borderRadius: 8, maxHeight: '70vh', overflow: 'auto', fontFamily: 'monospace' }}>
+                      {streamingPreview}
+                    </pre>
+                    <div style={{ color: '#999', fontSize: 12, marginTop: 8 }}>正在解析中，请稍候...</div>
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', paddingTop: 60 }}>
+                    <LoadingOutlined style={{ fontSize: 40, color: '#1890ff', marginBottom: 16 }} />
+                    <GeneratingProgress />
+                  </div>
+                )
+              ) : (
+                <>
+              <h2 style={{ marginBottom: 16 }}>{courseDoc.title}</h2>
+
+              <Card title="基本信息" size="small" style={{ marginBottom: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 14 }}>
+                  <div>课程名称：{editMode ? <Input value={courseDoc.title} onChange={(e) => setCourseDoc({ ...courseDoc, title: e.target.value })} /> : courseDoc.title}</div>
+                  <div>学科：{editMode ? <Input value={courseDoc.subject} onChange={(e) => setCourseDoc({ ...courseDoc, subject: e.target.value })} /> : courseDoc.subject}</div>
+                  <div>学段：{editMode ? <Input value={courseDoc.grade} onChange={(e) => setCourseDoc({ ...courseDoc, grade: e.target.value })} /> : courseDoc.grade}</div>
+                  <div>总课时：{editMode ? <><InputNumber value={courseDoc.duration} min={1} max={999} size="small" onChange={(val) => setCourseDoc({ ...courseDoc, duration: val || 1 })} style={{ width: 70 }} />分钟</> : `${courseDoc.duration}分钟`}</div>
+                </div>
+              </Card>
+
+              <Card title="教学目标" size="small" style={{ marginBottom: 16 }}>
+                {editMode ? <TextArea value={courseDoc.teachingGoal} rows={3} onChange={(e) => setCourseDoc({ ...courseDoc, teachingGoal: e.target.value })} onMouseUp={handleTeachingGoalSelect} /> : <p style={{ margin: 0 }}>{courseDoc.teachingGoal}</p>}
+              </Card>
+
+              <Card title="章节内容" size="small">
+                {courseDoc.chapters.map((chapter) => (
+                  <div key={chapter.id} style={{ marginBottom: 16 }}>
+                    <div style={{ fontWeight: 500, marginBottom: 8, color: chapter.isKeyPoint ? '#1890ff' : '#333', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {editMode ? (
+                        <>
+                          <span onClick={() => toggleChapterKey(chapter.id)} style={{ cursor: 'pointer', fontSize: 18, color: chapter.isKeyPoint ? '#faad14' : '#1890ff' }}>
+                            {chapter.isKeyPoint ? <StarFilled /> : <StarOutlined />}
+                          </span>
+                          <Input value={chapter.title} onChange={(e) => {
+                            const newDoc = { ...courseDoc };
+                            newDoc.chapters = newDoc.chapters.map(c => c.id === chapter.id ? { ...c, title: e.target.value } : c);
+                            setCourseDoc(newDoc);
+                          }} style={{ flex: 1, maxWidth: 300 }} />
+                          <InputNumber value={chapter.duration} min={1} max={999} size="small" onChange={(val) => updateChapterDuration(chapter.id, val || 1)} style={{ width: 70 }} />
+                          <span style={{ fontSize: 12, color: '#666' }}>分钟</span>
+                        </>
+                      ) : (
+                        <>
+                          {chapter.isKeyPoint && <StarFilled style={{ fontSize: 18, color: '#faad14' }} />}
+                          <span>{chapter.title}（{chapter.duration}分钟）</span>
+                        </>
+                      )}
+                    </div>
+
+                    {chapter.sections.map((section) => {
+                        const difficultyColor = section.difficulty === '简单' ? '#52c41a' : section.difficulty === '中等' ? '#fa8c16' : section.difficulty === '困难' ? '#f5222d' : '#999';
+                        const difficultyBg = section.difficulty === '简单' ? '#f6ffed' : section.difficulty === '中等' ? '#fff7e6' : section.difficulty === '困难' ? '#fff1f0' : '#f5f5f5';
+                        return (
+                          <div key={section.id} style={{ marginLeft: 24, marginBottom: 12, paddingLeft: 12, borderLeft: section.isKeyPoint ? '2px solid #1890ff' : '2px solid #e8e8e8' }}>
+                            <div style={{ fontWeight: 500, marginBottom: 4, color: section.isKeyPoint ? '#1890ff' : '#333', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                              {editMode ? (
+                                <>
+                                  <span onClick={() => toggleSectionKey(chapter.id, section.id)} style={{ cursor: 'pointer', fontSize: 16, color: section.isKeyPoint ? '#faad14' : '#1890ff' }}>
+                                    {section.isKeyPoint ? <StarFilled /> : <StarOutlined />}
+                                  </span>
+                                  <Input value={section.title} onChange={(e) => {
+                                    const newDoc = { ...courseDoc };
+                                    newDoc.chapters = newDoc.chapters.map(c => c.id === chapter.id ? { ...c, sections: c.sections.map(s => s.id === section.id ? { ...s, title: e.target.value } : s) } : c);
+                                    setCourseDoc(newDoc);
+                                  }} style={{ flex: 1, maxWidth: 250 }} />
+                                  <InputNumber value={section.duration} min={1} max={999} size="small" onChange={(val) => updateSectionDuration(chapter.id, section.id, val || 1)} style={{ width: 60 }} />
+                                  <span style={{ fontSize: 12, color: '#666' }}>分钟</span>
+                                </>
+                              ) : (
+                                <>
+                                  {section.isKeyPoint && <StarFilled style={{ fontSize: 16, color: '#faad14' }} />}
+                                  <span>{section.title}（{section.duration}分钟）</span>
+                                  {section.difficulty && (
+                                    <span style={{ fontSize: 11, padding: '1px 6px', borderRadius: 4, background: difficultyBg, color: difficultyColor, fontWeight: 400 }}>
+                                      {section.difficulty}
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                            {/* 教学内容 - teachingContent */}
+                            {section.teachingContent && (
+                              <div style={{ fontSize: 13, color: '#333', marginLeft: 20, marginTop: 6, lineHeight: 1.6 }}>
+                                {section.teachingContent}
+                              </div>
+                            )}
+                            {/* 其他字段：教学方法、典型案例、易错提醒 */}
+                            {!editMode && (section.teachingMethods || section.examples || section.commonMistakes) && (
+                              <div style={{ fontSize: 12, color: '#999', marginLeft: 20, marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                {section.teachingMethods && (
+                                  <div><span style={{ color: '#666' }}>教学方法：</span>{section.teachingMethods}</div>
+                                )}
+                                {section.examples && (
+                                  <div><span style={{ color: '#666' }}>典型案例：</span>{section.examples}</div>
+                                )}
+                                {section.commonMistakes && (
+                                  <div><span style={{ color: '#666' }}>易错提醒：</span>{section.commonMistakes}</div>
+                                )}
+                              </div>
+                            )}
+                            {/* 编辑模式：显示原始content字段 */}
+                            {editMode && (
+                              <div style={{ fontSize: 13, color: '#666', marginLeft: 20, marginTop: 6 }}>
+                                <TextArea value={section.content} rows={2} onChange={(e) => {
+                                  const newDoc = { ...courseDoc };
+                                  newDoc.chapters = newDoc.chapters.map(c => c.id === chapter.id ? { ...c, sections: c.sections.map(s => s.id === section.id ? { ...s, content: e.target.value } : s) } : c);
+                                  setCourseDoc(newDoc);
+                                }} />
+                              </div>
+                            )}
+                            {/* 非编辑模式：保留原有content显示（兼容旧数据） */}
+                            {!editMode && !section.teachingContent && (
+                              <div style={{ fontSize: 13, color: '#666', marginLeft: 20 }}>
+                                {section.content}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                  </div>
+                ))}
+              </Card>
+
+              {/* AI Popup */}
+              {showAiPopup && (
+                <div style={{ position: 'absolute', left: selectionPos.x, top: selectionPos.y + 5, zIndex: 1000, background: '#fff', borderRadius: 8, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', padding: 12, minWidth: 280 }}>
+                  <div style={{ marginBottom: 8, fontSize: 12, color: '#666' }}>
+                    选中文字：&quot;{selectedText.length > 40 ? selectedText.slice(0, 40) + '...' : selectedText}&quot;
+                  </div>
+                  {aiGeneratedContent ? (
+                    <>
+                      <div style={{ marginBottom: 8, fontSize: 12, color: '#1890ff' }}>
+                        AI生成结果：{aiGeneratedContent}
+                      </div>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <Button type="primary" size="small" onClick={confirmAiContent}>确认</Button>
+                        <Button size="small" onClick={cancelAiContent}>取消</Button>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <Button type="primary" size="small" onClick={handleAiRegenerate} disabled={regenerating}>
+                        {regenerating ? '生成中...' : 'AI重写'}
+                      </Button>
+                      <Button size="small" onClick={cancelAiContent}>取消</Button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Confirm Button */}
+              <div style={{ position: 'sticky', bottom: 24, float: 'right', marginTop: 24 }}>
+                <Button type="primary" size="large" onClick={() => { setShowDocPanel(false); setStep('step3'); }}>
+                  确认方案
+                </Button>
+              </div>
+                </>
+              )}
+            </div>
+          ) : null}
+        </div>
+
+        {/* History Modal */}
+        <Modal title="历史创作记录" open={historyVisible} onCancel={() => setHistoryVisible(false)} footer={null} width={500}>
+          {historyList.map((item) => (
+            <Card key={item.id} size="small" style={{ marginBottom: 8 }} hoverable>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <strong>{item.topic}</strong>
+                  <div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>{item.preview} · {item.createdAt}</div>
+                </div>
+                <Button type="link" onClick={() => handleLoadFromHistory(item)}>加载</Button>
+              </div>
+            </Card>
+          ))}
+        </Modal>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#f5f5f5' }}>
+      <div style={{ padding: '12px 24px', background: '#fff', borderBottom: '1px solid #e8e8e8' }}>
+        <Button onClick={() => setHistoryVisible(true)}>历史记录</Button>
+      </div>
+      <div style={{ flex: 1, overflow: 'auto', padding: '24px' }}>
+        {messages.map((msg, index) => (
+          <div key={index} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 16 }}>
+            {msg.role === 'ai' && <Avatar icon={<RobotOutlined />} style={{ background: '#1890ff', marginRight: 8 }} />}
+            <Card size="small" style={{ maxWidth: '70%', background: msg.role === 'user' ? '#1890ff' : '#fff', borderRadius: 12 }}>{msg.content}</Card>
+            {msg.role === 'user' && <Avatar icon={<UserOutlined />} style={{ background: '#52c41a', marginLeft: 8 }} />}
+          </div>
+        ))}
+      </div>
+      <div style={{ padding: '12px 16px', background: '#fff', borderTop: '1px solid #e8e8e8' }}>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <TextArea rows={1} value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} style={{ flex: 1 }} />
+          <Button type="primary" icon={<SendOutlined />} onClick={handleSend} />
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -394,6 +394,11 @@ def chat_stream():
                     prompt = item.get('prompt', '')
                     yield f"data: {json.dumps({'type': 'graphic_image_data', 'image_base64': image_data, 'prompt': prompt}, ensure_ascii=False)}\n\n"
 
+                # 情况6：课程大纲生成完成
+                elif isinstance(item, dict) and item.get('type') == 'course_generated':
+                    course_data = item.get('data', {})
+                    yield f"data: {json.dumps({'type': 'course_generated', 'data': course_data}, ensure_ascii=False)}\n\n"
+
                 # 其他情况：忽略
                 else:
                     request_logger.warning(f'[STREAM] 生成器 item {chunk_count}: 未知类型 {type(item)}')
