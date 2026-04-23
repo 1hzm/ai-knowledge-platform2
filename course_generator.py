@@ -112,22 +112,27 @@ class CourseGenerator:
         """
         从对话历史中提取主题（用于代词指代的情况）
         例如用户说"根据这个帮我生成大纲"，需要从历史中找出"这个"指代什么
-        需要同时看用户消息和AI回复，优先从AI回复中提取课程主题
+        优先从AI回复中提取课程主题，只看最近2条消息
         """
         import re
 
+        # 代词触发时，只看最近2条消息，避免往前翻太多
+        recent_history = conversation_history[-2:] if len(conversation_history) > 2 else conversation_history
+
         # 从最新的消息开始倒序查找（优先找AI回复中的课程主题）
-        for msg in reversed(conversation_history):
+        for msg in reversed(recent_history):
             content = msg.get('content', '')
             if not content or len(content) < 5:
                 continue
 
-            # 优先匹配AI回复中的课程相关模式
+            # 只从AI回复中提取课程主题
             if msg.get('role') == 'assistant':
                 course_patterns = [
-                    r'《(.+?)》',  # 《Python课程》
-                    r'【(.+?)】',  # 【Python课程】
-                    r'📚\s*\*\*(.+?)\*\*',  # 📚 **课程名**
+                    r'#{1,3}\s*📚\s*(.+?)(?:\n|$)',   # ## 📚 ABC英语字母学习课程
+                    r'#{1,3}\s*(.+?)(?:\n|$)',        # ## ABC英语字母学习课程
+                    r'《(.+?)》',                       # 《Python课程》
+                    r'【(.+?)】',                       # 【Python课程】
+                    r'📚\s*\*\*(.+?)\*\*',             # 📚 **课程名**
                     r'你可以学习(.+?)课程',
                     r'正好适合你！',
                 ]
@@ -137,18 +142,6 @@ class CourseGenerator:
                         topic = match.group(1).strip() if match.group(1) else None
                         if topic and len(topic) >= 2:
                             return topic
-
-            # 用户消息中查找课程相关词汇
-            subjects = ['课程', '学习', '教学', '培训', '教学']
-            for subject in subjects:
-                if subject in content:
-                    sentences = re.split(r'[。！？\n]', content)
-                    for sentence in sentences:
-                        if subject in sentence and len(sentence) > 5:
-                            topic = sentence.strip()
-                            topic = re.sub(r'^(我想要|我想|我要|能不能|可以|帮我|给我|根据|按照)\s*', '', topic)
-                            if len(topic) > 2:
-                                return topic
 
         return None
 
