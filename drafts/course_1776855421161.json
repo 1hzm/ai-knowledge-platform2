@@ -1,0 +1,154 @@
+{
+  "id": "course_1776855421161",
+  "name": "Python编程基础",
+  "createdAt": "2026-04-22T10:57:01.161Z",
+  "updatedAt": "2026-04-23T23:27:34.966438",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "介绍Python语言特点、应用领域及Anaconda、Pycharm等开发环境搭建",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "Python语言特点与应用场景",
+              "Anaconda环境安装",
+              "Pycharm编辑器使用"
+            ],
+            "summary": "了解Python语言优势并完成开发环境配置",
+            "title": "Python简介与开发环境"
+          },
+          {
+            "content": "讲解变量命名规则、常见数据类型（整型、浮点型、字符串、布尔型）及类型转换",
+            "duration": 10,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "变量命名规范",
+              "基本数据类型",
+              "类型转换函数"
+            ],
+            "summary": "掌握Python中基本数据类型的定义和使用",
+            "title": "变量与数据类型"
+          }
+        ],
+        "title": "Python基础入门"
+      },
+      {
+        "duration": 25,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "if单分支、if-else双分支、多分支if-elif-else结构及嵌套条件",
+            "duration": 12,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "if语句基本语法",
+              "多分支结构",
+              "条件表达式"
+            ],
+            "summary": "熟练使用条件语句实现程序分支控制",
+            "title": "条件语句"
+          },
+          {
+            "content": "for循环遍历序列、while循环条件迭代、break和continue控制循环流程",
+            "duration": 13,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "for循环用法",
+              "while循环用法",
+              "循环控制语句"
+            ],
+            "summary": "掌握两种循环语句的使用场景和技巧",
+            "title": "循环结构"
+          }
+        ],
+        "title": "控制结构"
+      },
+      {
+        "duration": 25,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "函数定义语法、参数传递、返回值及变量作用域",
+            "duration": 15,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "def语句定义函数",
+              "参数默认值",
+              "return返回值"
+            ],
+            "summary": "能够自定义函数并合理组织代码结构",
+            "title": "函数定义与调用"
+          },
+          {
+            "content": "模块导入方式、常用标准库（math、random、datetime）的使用",
+            "duration": 10,
+            "id": "3-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "import导入模块",
+              "from...import语法",
+              "常用标准库函数"
+            ],
+            "summary": "学会使用Python标准库扩展程序功能",
+            "title": "模块与标准库"
+          }
+        ],
+        "title": "函数与模块"
+      },
+      {
+        "duration": 20,
+        "id": "4",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "列表的创建、索引、切片、增删改查操作及列表推导式",
+            "duration": 12,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "列表基本操作",
+              "索引与切片",
+              "列表推导式"
+            ],
+            "summary": "掌握列表这一核心数据结构的灵活运用",
+            "title": "列表与元组"
+          },
+          {
+            "content": "字典的键值对操作、集合的去重与交并差运算",
+            "duration": 8,
+            "id": "4-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "字典的创建与访问",
+              "集合的基本运算",
+              "数据结构选择"
+            ],
+            "summary": "了解字典和集合的特性及适用场景",
+            "title": "字典与集合"
+          }
+        ],
+        "title": "数据结构基础"
+      }
+    ],
+    "duration": 90,
+    "grade": "大学一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握Python基础语法和编程思维，能够独立编写简单的Python程序",
+    "title": "Python编程基础"
+  },
+  "contents": [],
+  "topic": "Python编程基础",
+  "preview": "信息技术"
+}

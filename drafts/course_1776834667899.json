@@ -1,0 +1,146 @@
+{
+  "id": "course_1776834667899",
+  "name": "Python编程入门",
+  "createdAt": "2026-04-22T05:11:07.899Z",
+  "updatedAt": "2026-04-23T23:27:34.987424",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 120,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "介绍Python语言特点、应用场景，安装Python及开发环境（如PyCharm）",
+            "duration": 30,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "Python语言特点",
+              "开发环境安装"
+            ],
+            "summary": "了解Python语言的基本特点和安装环境",
+            "title": "Python简介与环境搭建"
+          },
+          {
+            "content": "学习Python中的变量定义、常见数据类型（整数、浮点数、字符串、布尔值）",
+            "duration": 45,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "变量命名规则",
+              "数据类型"
+            ],
+            "summary": "掌握Python变量的定义和基本数据类型",
+            "title": "变量与数据类型"
+          },
+          {
+            "content": "学习使用print()和input()函数进行简单的输入输出操作",
+            "duration": 30,
+            "id": "1-3",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "print()函数",
+              "input()函数"
+            ],
+            "summary": "掌握Python的基本输入输出方法",
+            "title": "基本输入输出"
+          }
+        ],
+        "title": "Python基础入门"
+      },
+      {
+        "duration": 90,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习if、elif、else语句的使用，理解条件判断的逻辑",
+            "duration": 45,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "if语句",
+              "逻辑判断"
+            ],
+            "summary": "掌握Python条件语句的基本用法",
+            "title": "条件语句"
+          },
+          {
+            "content": "学习for循环和while循环的使用，掌握循环控制语句（break、continue）",
+            "duration": 45,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "for循环",
+              "while循环"
+            ],
+            "summary": "掌握Python循环语句的基本用法",
+            "title": "循环语句"
+          }
+        ],
+        "title": "流程控制"
+      },
+      {
+        "duration": 90,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习如何定义函数、调用函数，理解函数的参数和返回值",
+            "duration": 45,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "函数定义",
+              "参数传递"
+            ],
+            "summary": "掌握Python函数的基本用法",
+            "title": "函数定义与调用"
+          },
+          {
+            "content": "学习如何导入和使用Python标准库及第三方库",
+            "duration": 45,
+            "id": "3-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "模块导入",
+              "常用库介绍"
+            ],
+            "summary": "掌握Python模块和库的基本用法",
+            "title": "模块与库"
+          }
+        ],
+        "title": "函数与模块"
+      },
+      {
+        "duration": 120,
+        "id": "4",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "综合运用所学知识，开发一个简单的命令行计算器",
+            "duration": 120,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "综合运用",
+              "调试技巧"
+            ],
+            "summary": "通过项目巩固Python基础知识",
+            "title": "简易计算器"
+          }
+        ],
+        "title": "项目实战"
+      }
+    ],
+    "duration": 30,
+    "grade": "高中/大学",
+    "subject": "计算机科学",
+    "teachingGoal": "掌握Python基础语法和编程思维，能够独立完成简单的编程项目",
+    "title": "Python编程入门"
+  },
+  "contents": [],
+  "topic": "Python编程入门",
+  "preview": "计算机科学"
+}

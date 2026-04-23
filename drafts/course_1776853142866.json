@@ -1,0 +1,170 @@
+{
+  "id": "course_1776853142866",
+  "name": "几何图形初步认识",
+  "createdAt": "2026-04-22T10:19:02.866Z",
+  "updatedAt": "2026-04-23T23:27:35.001429",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 30,
+        "id": "1",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "介绍点、线、面、体的概念及常见几何图形",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "点线面体的概念",
+              "常见几何图形识别"
+            ],
+            "summary": "理解基本几何元素，掌握常见平面和立体图形",
+            "title": "认识常见几何图形"
+          },
+          {
+            "content": "学习几何图形的不同分类标准和方法",
+            "duration": 10,
+            "id": "1-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "按维度分类",
+              "按形状特征分类"
+            ],
+            "summary": "掌握按维度、按形状等多种分类方式",
+            "title": "几何图形的分类"
+          },
+          {
+            "content": "发现并分析生活中的几何图形应用实例",
+            "duration": 10,
+            "id": "1-3",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "生活中的几何现象",
+              "几何知识的实际意义"
+            ],
+            "summary": "培养几何直观，体会数学与生活的联系",
+            "title": "几何图形在生活中的应用"
+          }
+        ],
+        "title": "几何图形基础知识"
+      },
+      {
+        "duration": 35,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习线段、射线、直线的定义和表示方法",
+            "duration": 12,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "线段射线直线的定义",
+              "符号表示方法"
+            ],
+            "summary": "理解三种线的区别与联系，掌握相关符号表示",
+            "title": "认识线段和射线"
+          },
+          {
+            "content": "掌握角的概念、表示方法及角度制",
+            "duration": 12,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "角的定义",
+              "角度制与弧度制基础"
+            ],
+            "summary": "理解角的本质属性，学会用多种方式表示角",
+            "title": "角的定义与表示"
+          },
+          {
+            "content": "学习使用量角器测量和比较角的大小",
+            "duration": 11,
+            "id": "2-3",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "量角器的使用",
+              "角度的比较与计算"
+            ],
+            "summary": "掌握角的测量方法，能进行简单的角度计算",
+            "title": "角的度量"
+          }
+        ],
+        "title": "线段与角"
+      },
+      {
+        "duration": 30,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "认识三角形的定义、分类及基本性质",
+            "duration": 15,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "三角形的分类",
+              "三角形内角和定理"
+            ],
+            "summary": "掌握三角形的分类方法和内角和定理",
+            "title": "三角形的基本概念"
+          },
+          {
+            "content": "学习矩形、平行四边形、正方形等四边形的特征",
+            "duration": 15,
+            "id": "3-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "特殊四边形的定义",
+              "四边形之间的关系"
+            ],
+            "summary": "理解各类四边形的定义及相互关系",
+            "title": "四边形的认识"
+          }
+        ],
+        "title": "平面图形"
+      },
+      {
+        "duration": 25,
+        "id": "4",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "掌握基本的尺规作图方法，包括画线段和弧",
+            "duration": 13,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "直尺的使用规范",
+              "圆规的基本操作"
+            ],
+            "summary": "学会使用直尺和圆规完成基本作图任务",
+            "title": "使用直尺和圆规作图"
+          },
+          {
+            "content": "通过实例练习巩固尺规作图技能",
+            "duration": 12,
+            "id": "4-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "作图步骤的规范",
+              "图形准确性检验"
+            ],
+            "summary": "能够独立完成简单的几何作图任务",
+            "title": "简单几何作图实例"
+          }
+        ],
+        "title": "几何作图基础"
+      }
+    ],
+    "duration": 120,
+    "grade": "初中一年级",
+    "subject": "数学",
+    "teachingGoal": "掌握基本几何图形的识别、分类及简单几何作图技能",
+    "title": "几何图形初步认识"
+  },
+  "contents": [],
+  "topic": "几何图形初步认识",
+  "preview": "数学"
+}

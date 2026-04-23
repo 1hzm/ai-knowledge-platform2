@@ -1,0 +1,119 @@
+{
+  "id": "course_1776904789720",
+  "name": "计算机基础应用",
+  "createdAt": "2026-04-23T00:39:49.720Z",
+  "updatedAt": "2026-04-23T23:27:35.007446",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "认识计算机硬件系统的五大组成部分及其功能",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "计算机硬件组成",
+              "CPU、内存、存储设备功能"
+            ],
+            "summary": "了解计算机的基本构成和运行原理",
+            "title": "计算机组成与工作原理"
+          },
+          {
+            "content": "学习Windows操作系统的基本界面和文件管理",
+            "duration": 10,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "桌面图标认识",
+              "文件与文件夹管理",
+              "开始菜单使用"
+            ],
+            "summary": "掌握操作系统基本操作和文件管理方法",
+            "title": "操作系统基础"
+          }
+        ],
+        "title": "计算机基础知识"
+      },
+      {
+        "duration": 35,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "文档的创建、编辑、保存和基本格式设置",
+            "duration": 15,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "文档创建与保存",
+              "文本输入与编辑",
+              "字体和段落格式设置"
+            ],
+            "summary": "掌握Word软件的基本操作技能",
+            "title": "Word基本操作"
+          },
+          {
+            "content": "页面布局设置、插入图片和表格",
+            "duration": 20,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "页面设置",
+              "插入图片和艺术字",
+              "表格制作"
+            ],
+            "summary": "能够进行简单的文档排版和图文混排",
+            "title": "文档排版技巧"
+          }
+        ],
+        "title": "文字处理软件"
+      },
+      {
+        "duration": 35,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "工作表的创建、数据的输入与编辑",
+            "duration": 15,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "单元格操作",
+              "数据输入技巧",
+              "工作表管理"
+            ],
+            "summary": "掌握Excel工作表的基本操作方法",
+            "title": "Excel基本操作"
+          },
+          {
+            "content": "学习常用函数和简单数据统计分析",
+            "duration": 20,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "SUM、AVERAGE函数使用",
+              "相对引用与绝对引用",
+              "数据排序与筛选"
+            ],
+            "summary": "能够使用公式和函数进行简单数据计算",
+            "title": "公式与函数应用"
+          }
+        ],
+        "title": "电子表格应用"
+      }
+    ],
+    "duration": 90,
+    "grade": "初中一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握计算机基本操作技能，能够熟练使用常用办公软件进行文档处理和数据整理",
+    "title": "计算机基础应用"
+  },
+  "contents": [],
+  "topic": "计算机基础应用",
+  "preview": "信息技术"
+}

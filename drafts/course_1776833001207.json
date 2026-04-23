@@ -1,0 +1,158 @@
+{
+  "id": "course_1776833001207",
+  "name": "Python编程入门",
+  "createdAt": "2026-04-22T04:43:21.207Z",
+  "updatedAt": "2026-04-23T23:27:34.982425",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 120,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "介绍Python语言特性、应用场景，安装Python解释器及开发环境",
+            "duration": 30,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "Python特点",
+              "IDLE使用"
+            ],
+            "summary": "了解Python并完成开发环境配置",
+            "title": "Python简介与环境搭建"
+          },
+          {
+            "content": "变量、数字、字符串、布尔值等基础数据类型及运算符使用",
+            "duration": 45,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "变量命名规则",
+              "类型转换"
+            ],
+            "summary": "掌握Python基础语法规则",
+            "title": "基本语法与数据类型"
+          },
+          {
+            "content": "条件判断(if-elif-else)和循环语句(while/for)的使用",
+            "duration": 45,
+            "id": "1-3",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "缩进规则",
+              "循环嵌套"
+            ],
+            "summary": "实现基础程序逻辑控制",
+            "title": "流程控制语句"
+          }
+        ],
+        "title": "Python基础入门"
+      },
+      {
+        "duration": 90,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "有序集合的使用方法与常用操作",
+            "duration": 45,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "切片操作",
+              "列表推导式"
+            ],
+            "summary": "掌握序列类型数据处理",
+            "title": "列表与元组"
+          },
+          {
+            "content": "键值对映射与无序集合的应用场景",
+            "duration": 45,
+            "id": "2-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "字典查询优化",
+              "集合运算"
+            ],
+            "summary": "理解非序列数据结构",
+            "title": "字典与集合"
+          }
+        ],
+        "title": "Python核心数据结构"
+      },
+      {
+        "duration": 90,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "参数传递、返回值、作用域等概念",
+            "duration": 45,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "形参与实参",
+              "局部/全局变量"
+            ],
+            "summary": "构建可复用代码块",
+            "title": "函数定义与调用"
+          },
+          {
+            "content": "import机制及常用标准库(math, random等)使用",
+            "duration": 45,
+            "id": "3-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "__name__属性",
+              "pip安装"
+            ],
+            "summary": "掌握代码组织方式",
+            "title": "模块与标准库"
+          }
+        ],
+        "title": "函数与模块化编程"
+      },
+      {
+        "duration": 180,
+        "id": "4",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "综合运用基础语法实现完整小游戏",
+            "duration": 90,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "异常处理",
+              "随机数生成"
+            ],
+            "summary": "巩固基础语法实践能力",
+            "title": "猜数字游戏"
+          },
+          {
+            "content": "使用字典和文件操作实现数据持久化",
+            "duration": 90,
+            "id": "4-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "文件读写",
+              "CRUD操作"
+            ],
+            "summary": "体验完整开发流程",
+            "title": "简易通讯录系统"
+          }
+        ],
+        "title": "实战项目开发"
+      }
+    ],
+    "duration": 20,
+    "grade": "高中/大学入门",
+    "subject": "计算机科学",
+    "teachingGoal": "掌握Python基础语法、编程思维及简单项目开发能力",
+    "title": "Python编程入门"
+  },
+  "contents": [],
+  "topic": "Python编程入门",
+  "preview": "计算机科学"
+}

@@ -1,0 +1,152 @@
+{
+  "id": "course_1776862038400",
+  "name": "信息技术基础",
+  "createdAt": "2026-04-22T12:47:18.400Z",
+  "updatedAt": "2026-04-23T23:27:34.983426",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 25,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "了解计算机从发明到现代的发展演变过程",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "计算机发展历史",
+              "现代计算机分类"
+            ],
+            "summary": "认识计算机的发展历史和重要里程碑",
+            "title": "计算机的发展历程"
+          },
+          {
+            "content": "认识计算机主要硬件设备及其功能",
+            "duration": 15,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "输入设备",
+              "输出设备",
+              "主机组成"
+            ],
+            "summary": "掌握计算机五大硬件组成部分",
+            "title": "计算机的硬件组成"
+          }
+        ],
+        "title": "认识计算机系统"
+      },
+      {
+        "duration": 30,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "了解操作系统的概念和主要功能",
+            "duration": 10,
+            "id": "2-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "操作系统定义",
+              "常见操作系统"
+            ],
+            "summary": "理解操作系统在计算机中的核心作用",
+            "title": "认识操作系统"
+          },
+          {
+            "content": "学习Windows桌面操作和窗口基本管理",
+            "duration": 20,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "桌面图标",
+              "窗口最小化最大化",
+              "开始菜单"
+            ],
+            "summary": "掌握桌面图标和窗口的基本操作方法",
+            "title": "桌面和窗口操作"
+          }
+        ],
+        "title": "操作系统基础"
+      },
+      {
+        "duration": 20,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "理解文件和文件夹的定义及区别",
+            "duration": 8,
+            "id": "3-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "文件定义",
+              "文件夹功能"
+            ],
+            "summary": "建立文件和文件夹的基本概念",
+            "title": "文件和文件夹的概念"
+          },
+          {
+            "content": "掌握新建、复制、移动、删除文件和文件夹",
+            "duration": 12,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "新建操作",
+              "复制粘贴",
+              "移动重命名",
+              "删除回收站"
+            ],
+            "summary": "能够独立完成文件和文件夹的基本管理操作",
+            "title": "文件和文件夹操作"
+          }
+        ],
+        "title": "文件与文件夹管理"
+      },
+      {
+        "duration": 15,
+        "id": "4",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "了解计算机网络的基本概念和分类",
+            "duration": 8,
+            "id": "4-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "网络定义",
+              "局域网",
+              "互联网"
+            ],
+            "summary": "认识局域网和互联网的基本概念",
+            "title": "认识计算机网络"
+          },
+          {
+            "content": "学习网络安全意识和文明上网规范",
+            "duration": 7,
+            "id": "4-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "密码安全",
+              "防范网络诈骗",
+              "文明上网"
+            ],
+            "summary": "培养基本的网络安全意识和自我保护能力",
+            "title": "安全上网常识"
+          }
+        ],
+        "title": "网络基础知识"
+      }
+    ],
+    "duration": 90,
+    "grade": "小学五年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握计算机基本操作技能和信息素养基础",
+    "title": "信息技术基础"
+  },
+  "contents": [],
+  "topic": "信息技术基础",
+  "preview": "信息技术"
+}

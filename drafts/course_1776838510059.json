@@ -1,0 +1,154 @@
+{
+  "id": "course_1776838510059",
+  "name": "Python编程基础",
+  "createdAt": "2026-04-22T06:15:10.059Z",
+  "updatedAt": "2026-04-23T23:27:34.986424",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "介绍Python语言特点、应用领域和开发环境搭建",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "Python语言特点",
+              "Anaconda/PyCharm安装",
+              "第一个Python程序"
+            ],
+            "summary": "了解Python的基本概念和开发环境",
+            "title": "Python简介与环境配置"
+          },
+          {
+            "content": "变量定义规则、常用数据类型及类型转换",
+            "duration": 10,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "变量命名规范",
+              "int、float、str类型",
+              "类型转换方法"
+            ],
+            "summary": "掌握变量的使用和基本数据类型",
+            "title": "变量与数据类型"
+          }
+        ],
+        "title": "Python入门"
+      },
+      {
+        "duration": 25,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "if、elif、else语句的使用方法和嵌套结构",
+            "duration": 12,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "if-elif-else结构",
+              "条件表达式",
+              "嵌套条件"
+            ],
+            "summary": "掌握条件判断的实现方式",
+            "title": "条件语句"
+          },
+          {
+            "content": "for循环和while循环的实现与应用场景",
+            "duration": 13,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "for循环遍历",
+              "while循环条件",
+              "break和continue"
+            ],
+            "summary": "掌握重复执行的代码结构",
+            "title": "循环语句"
+          }
+        ],
+        "title": "控制流程"
+      },
+      {
+        "duration": 25,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "列表的创建、索引、切片、增删改查操作",
+            "duration": 13,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "列表索引与切片",
+              "append、insert方法",
+              "列表推导式"
+            ],
+            "summary": "掌握列表这一核心数据结构的用法",
+            "title": "列表"
+          },
+          {
+            "content": "字典的创建、键值对操作和常用方法",
+            "duration": 12,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "字典创建",
+              "get方法",
+              "items遍历"
+            ],
+            "summary": "掌握键值对数据结构的使用",
+            "title": "字典"
+          }
+        ],
+        "title": "数据结构"
+      },
+      {
+        "duration": 20,
+        "id": "4",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "函数的定义、参数传递和返回值处理",
+            "duration": 10,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "def关键字",
+              "参数传递方式",
+              "return返回值"
+            ],
+            "summary": "掌握函数的创建和调用方法",
+            "title": "函数定义与调用"
+          },
+          {
+            "content": "默认参数、关键字参数和变量的作用域概念",
+            "duration": 10,
+            "id": "4-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "默认参数值",
+              "关键字参数",
+              "全局变量与局部变量"
+            ],
+            "summary": "理解函数参数的灵活使用和作用域规则",
+            "title": "参数与作用域"
+          }
+        ],
+        "title": "函数基础"
+      }
+    ],
+    "duration": 90,
+    "grade": "零基础学习者/高中一年级/大学一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握Python基础语法和编程思维，能够独立编写简单的Python程序",
+    "title": "Python编程基础"
+  },
+  "contents": [],
+  "topic": "Python编程基础",
+  "preview": "信息技术"
+}

@@ -1,0 +1,168 @@
+{
+  "id": "course_1776859167610",
+  "name": "Java编程基础",
+  "createdAt": "2026-04-22T11:59:27.610Z",
+  "updatedAt": "2026-04-23T23:27:35.000428",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "介绍Java语言的诞生背景、主要特点和应用领域",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "Java发展历程",
+              "Java技术体系",
+              "Java应用场景"
+            ],
+            "summary": "了解Java语言由Sun公司于1995年推出，掌握其跨平台、面向对象、安全性高等特点",
+            "title": "Java简介与发展历程"
+          },
+          {
+            "content": "学习JDK的下载、安装和环境变量配置，掌握第一个Java程序",
+            "duration": 10,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "JDK下载安装",
+              "环境变量配置",
+              "HelloWorld程序"
+            ],
+            "summary": "完成JDK环境配置，能够编译和运行简单的Java程序",
+            "title": "JDK安装与配置"
+          }
+        ],
+        "title": "Java概述与环境搭建"
+      },
+      {
+        "duration": 30,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习Java的基本数据类型、引用数据类型以及变量的声明和使用",
+            "duration": 15,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "基本数据类型",
+              "变量声明",
+              "类型转换"
+            ],
+            "summary": "掌握8种基本数据类型及其取值范围，能够正确声明和使用变量",
+            "title": "数据类型与变量"
+          },
+          {
+            "content": "学习算术运算符、关系运算符、逻辑运算符等的使用",
+            "duration": 15,
+            "id": "2-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "算术运算符",
+              "关系运算符",
+              "逻辑运算符"
+            ],
+            "summary": "掌握各类运算符的优先级和结合性，能够正确书写表达式",
+            "title": "运算符与表达式"
+          }
+        ],
+        "title": "Java基础语法"
+      },
+      {
+        "duration": 25,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习if语句、if-else语句、多重if语句和switch语句",
+            "duration": 12,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "if语句",
+              "if-else结构",
+              "switch语句"
+            ],
+            "summary": "掌握选择结构的语法和使用场景，能够根据条件选择执行不同代码",
+            "title": "条件判断语句"
+          },
+          {
+            "content": "学习for循环、while循环和do-while循环，以及循环控制语句",
+            "duration": 13,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "for循环",
+              "while循环",
+              "循环嵌套"
+            ],
+            "summary": "掌握三种循环结构的语法和应用场景，能够使用break和continue控制循环",
+            "title": "循环结构"
+          }
+        ],
+        "title": "控制结构"
+      },
+      {
+        "duration": 35,
+        "id": "4",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习类的定义、对象的创建和使用，理解面向对象思想",
+            "duration": 15,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "类的定义",
+              "对象创建",
+              "成员变量",
+              "成员方法"
+            ],
+            "summary": "掌握类的定义语法，能够创建对象并调用其属性和方法",
+            "title": "类与对象"
+          },
+          {
+            "content": "学习访问修饰符、构造方法的作用和定义，以及封装的概念",
+            "duration": 10,
+            "id": "4-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "访问修饰符",
+              "构造方法",
+              "this关键字"
+            ],
+            "summary": "理解封装的意义，掌握构造方法的重载和this关键字的使用",
+            "title": "封装与构造方法"
+          },
+          {
+            "content": "综合运用所学知识，设计和实现一个简单的Java类",
+            "duration": 10,
+            "id": "4-3",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "类设计思路",
+              "代码实现",
+              "程序测试"
+            ],
+            "summary": "能够独立设计一个完整的类，包括属性、方法和构造方法",
+            "title": "简单类设计实践"
+          }
+        ],
+        "title": "面向对象基础"
+      }
+    ],
+    "duration": 110,
+    "grade": "大学一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握Java编程基础，能够独立编写简单的Java程序",
+    "title": "Java编程基础"
+  },
+  "contents": [],
+  "topic": "Java编程基础",
+  "preview": "信息技术"
+}

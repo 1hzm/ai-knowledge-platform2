@@ -1,0 +1,114 @@
+{
+  "id": "course_1776861635531",
+  "name": "ABC英语字母学习课程",
+  "createdAt": "2026-04-22T12:40:35.531Z",
+  "updatedAt": "2026-04-23T23:27:34.968438",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习26个字母的名称和顺序",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "26个字母的顺序",
+              "字母的大小写对应"
+            ],
+            "summary": "通过歌曲和游戏认识完整的字母表",
+            "title": "认识字母表"
+          },
+          {
+            "content": "学习字母的基本发音规律",
+            "duration": 10,
+            "id": "1-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "字母音与音素的对应",
+              "简单的拼读规则"
+            ],
+            "summary": "掌握字母在单词中的基本发音",
+            "title": "字母发音基础"
+          }
+        ],
+        "title": "字母表入门"
+      },
+      {
+        "duration": 20,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习A、E、I、O、U的发音和应用",
+            "duration": 12,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "元音字母的发音",
+              "短元音和长元音"
+            ],
+            "summary": "重点掌握五个元音字母的发音规律",
+            "title": "五个元音字母"
+          },
+          {
+            "content": "学习简单的元音字母组合",
+            "duration": 8,
+            "id": "2-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "ai、ea等常见组合",
+              "组合的发音规律"
+            ],
+            "summary": "了解常见的元音字母组合发音",
+            "title": "元音字母组合"
+          }
+        ],
+        "title": "元音字母学习"
+      },
+      {
+        "duration": 20,
+        "id": "3",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "学习21个辅音字母的基本发音",
+            "duration": 10,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "清辅音和浊辅音",
+              "常见辅音字母发音"
+            ],
+            "summary": "掌握辅音字母的发音特点",
+            "title": "辅音字母发音"
+          },
+          {
+            "content": "练习字母的正确书写格式",
+            "duration": 10,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "字母笔画顺序",
+              "字母在四线三格中的位置"
+            ],
+            "summary": "掌握字母的大小写书写规范",
+            "title": "字母书写规范"
+          }
+        ],
+        "title": "辅音字母与书写"
+      }
+    ],
+    "duration": 60,
+    "grade": "小学一年级",
+    "subject": "英语",
+    "teachingGoal": "学生能够认读写26个英语字母，掌握字母的基本发音和书写规范",
+    "title": "ABC英语字母学习课程"
+  },
+  "contents": [],
+  "topic": "ABC英语字母学习课程",
+  "preview": "英语"
+}

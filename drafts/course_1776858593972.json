@@ -1,0 +1,134 @@
+{
+  "id": "course_1776858593972",
+  "name": "数字123的认识",
+  "createdAt": "2026-04-22T11:49:53.972Z",
+  "updatedAt": "2026-04-23T23:27:34.992431",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 25,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "通过实物和图片认识数字1的形状特征",
+            "duration": 12,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "数字1的形状像铅笔",
+              "数字1的书写顺序"
+            ],
+            "summary": "学生能够说出数字1像什么，建立数字1的视觉形象",
+            "title": "数字1像什么"
+          },
+          {
+            "content": "通过计数活动理解1代表单一数量",
+            "duration": 13,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "一个物体的计数",
+              "数字1与数量的对应"
+            ],
+            "summary": "学生能正确数出数量为1的物体",
+            "title": "1的数量概念"
+          }
+        ],
+        "title": "认识数字1"
+      },
+      {
+        "duration": 25,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "通过实物和图片认识数字2的形状特征",
+            "duration": 12,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "数字2的形状像天鹅",
+              "数字2的书写顺序"
+            ],
+            "summary": "学生能够说出数字2像天鹅，建立数字2的视觉形象",
+            "title": "数字2像什么"
+          },
+          {
+            "content": "通过计数活动理解2代表两个物体",
+            "duration": 13,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "两个物体的计数",
+              "数字2与数量的对应"
+            ],
+            "summary": "学生能正确数出数量为2的物体",
+            "title": "2的数量概念"
+          }
+        ],
+        "title": "认识数字2"
+      },
+      {
+        "duration": 25,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "通过实物和图片认识数字3的形状特征",
+            "duration": 12,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "数字3的形状像耳朵",
+              "数字3的书写顺序"
+            ],
+            "summary": "学生能够说出数字3像耳朵，建立数字3的视觉形象",
+            "title": "数字3像什么"
+          },
+          {
+            "content": "通过计数活动理解3代表三个物体",
+            "duration": 13,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "三个物体的计数",
+              "数字3与数量的对应"
+            ],
+            "summary": "学生能正确数出数量为3的物体",
+            "title": "3的数量概念"
+          }
+        ],
+        "title": "认识数字3"
+      },
+      {
+        "duration": 15,
+        "id": "4",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "学习比较1、2、3三个数字的大小关系",
+            "duration": 15,
+            "id": "4-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "1<2<3的大小关系",
+              "区分三个数字的不同特征"
+            ],
+            "summary": "学生能说出1、2、3的大小顺序关系",
+            "title": "数字的比较与区分"
+          }
+        ],
+        "title": "数字1、2、3的综合运用"
+      }
+    ],
+    "duration": 90,
+    "grade": "幼儿园大班/小学一年级",
+    "subject": "数学",
+    "teachingGoal": "学生能够正确认识数字1、2、3，理解其数量含义，并能进行基本的大小比较",
+    "title": "数字123的认识"
+  },
+  "contents": [],
+  "topic": "数字123的认识",
+  "preview": "数学"
+}

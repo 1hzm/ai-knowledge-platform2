@@ -1,0 +1,909 @@
+"""
+MiniMax Agent Web 应用
+Flask 后端服务
+"""
+
+from flask import Flask, render_template, request, jsonify, Response
+from flask_cors import CORS
+from minimax_agent import MiniMaxAgent
+from memory_manager import MemoryManager
+from course_generator import CourseGenerator
+import json
+import os
+import logging
+import sys
+from datetime import datetime
+
+# ==================== 日志配置 ====================
+LOG_FORMAT = '%(asctime)s [%(levelname)s] %(name)s - %(message)s'
+LOG_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+# 配置根日志记录器
+logging.basicConfig(
+    level=logging.DEBUG,
+    format=LOG_FORMAT,
+    datefmt=LOG_DATE_FORMAT,
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+# 创建 Flask 应用日志记录器
+app_logger = logging.getLogger('MiniMaxAgent.app')
+app_logger.setLevel(logging.DEBUG)
+
+# 创建 API 日志记录器
+api_logger = logging.getLogger('MiniMaxAgent.api')
+api_logger.setLevel(logging.DEBUG)
+
+# 请求日志记录器
+request_logger = logging.getLogger('MiniMaxAgent.request')
+request_logger.setLevel(logging.DEBUG)
+
+# ==================== 全局记忆管理器 ====================
+_memory_manager = None
+
+def get_memory_manager():
+    """获取全局记忆管理器实例"""
+    global _memory_manager
+    if _memory_manager is None:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        _memory_manager = MemoryManager(base_dir)
+    return _memory_manager
+
+app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"], "allow_headers": ["Content-Type"]}})
+
+app_logger.info('=' * 60)
+app_logger.info('MiniMax Agent Web 应用启动中...')
+app_logger.info('=' * 60)
+
+# API 密钥
+API_KEY = "sk-cp-R5mBFqj9u1T2bGt0aoKbmeND4g192tPUl-CQ5jLt4cbv5dsCSkmYbEVyfPALPzEI-jnVNfSQB_dHCAiiAO_pi2um_sWwFBbageq9P8yKmBc-ZaZeX7dY5Do"
+
+# 存储用户会话（简单实现，生产环境应使用 Redis 等）
+sessions = {}
+
+# 草稿箱管理器
+from drafts_manager import DraftsManager
+drafts_manager = DraftsManager()
+
+# 草稿箱管理器
+from drafts_manager import DraftsManager
+drafts_manager = DraftsManager()
+
+
+def get_agent(session_id: str) -> MiniMaxAgent:
+    """获取或创建 Agent 实例"""
+    if session_id not in sessions:
+        agent = MiniMaxAgent(API_KEY, session_id)
+        sessions[session_id] = agent
+    return sessions[session_id]
+
+
+@app.route('/')
+def index():
+    """主页 - 返回聊天界面"""
+    app_logger.info('收到请求: GET / (主页)')
+    app_logger.debug('渲染 index.html 模板')
+    return render_template('index.html')
+
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    """非流式聊天接口"""
+    request_logger.info('=' * 50)
+    request_logger.info('[CHAT] 收到非流式聊天请求')
+    request_logger.info(f'[CHAT] 请求数据: {request.json}')
+
+    data = request.json
+    message = data.get('message', '').strip()
+    session_id = data.get('session_id', 'default')
+
+    request_logger.info(f'[CHAT] session_id: {session_id}')
+    request_logger.info(f'[CHAT] message: {message[:100]}...' if len(message) > 100 else f'[CHAT] message: {message}')
+
+    if not message:
+        request_logger.warning('[CHAT] 消息为空，返回 400')
+        return jsonify({'error': '消息不能为空'}), 400
+
+    request_logger.info('[CHAT] 获取 Agent 实例')
+    agent = get_agent(session_id)
+
+    request_logger.info('[CHAT] 调用 agent.chat() - stream=False')
+    response = agent.chat(message, stream=False)
+    request_logger.info(f'[CHAT] agent.chat() 返回，响应长度: {len(str(response))}')
+
+    history = agent.get_history()
+    request_logger.info(f'[CHAT] 当前对话历史长度: {len(history)}')
+
+    request_logger.info('[CHAT] 返回响应')
+    return jsonify({
+        'response': response,
+        'history': agent.get_history()
+    })
+
+
+@app.route('/api/test/stream', methods=['GET'])
+def test_stream():
+    """测试流式接口"""
+    import time
+    def generate():
+        for i in range(5):
+            yield f"data: {{'chunk': '测试数据 {i}'}}\n\n"
+            time.sleep(0.5)
+        yield f"data: {{'done': true}}\n\n"
+    return Response(generate(), mimetype='text/event-stream')
+
+
+@app.route('/api/course/stream', methods=['POST'])
+def course_stream():
+    """课程大纲生成接口"""
+    request_logger.info('=' * 50)
+    request_logger.info('[COURSE] 收到课程大纲生成请求')
+
+    data = request.json or {}
+    topic = data.get('topic', data.get('message', '')).strip()
+
+    if not topic:
+        return jsonify({'error': '主题不能为空'}), 400
+
+    request_logger.info(f'[COURSE] topic: {topic}')
+
+    CourseGenerator.set_api_key(API_KEY)
+    course_gen = CourseGenerator()
+
+    full_text = ''
+    try:
+        for chunk in course_gen.generate_course_stream(topic):
+            full_text += chunk
+        request_logger.info(f'[COURSE] 生成完成，文本长度: {len(full_text)}')
+        return jsonify({'result': full_text}), 200
+    except Exception as e:
+        request_logger.error(f'[COURSE] 生成错误: {e}')
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/memory/save-course', methods=['POST'])
+def save_course_memory():
+    """保存课程到记忆"""
+    data = request.json or {}
+    course_data = data.get('course', {})
+    session_id = data.get('session_id', 'default')
+
+    memory = get_memory_manager()
+    title = course_data.get('title', '未命名课程')
+    subject = course_data.get('subject', '')
+    grade = course_data.get('grade', '')
+    chapters = course_data.get('chapters', [])
+    chapter_count = len(chapters)
+
+    content = f"【课程大纲】\n**主题**：{title}\n**学科**：{subject}\n**学段**：{grade}\n**章节数**：{chapter_count}章"
+    if chapters:
+        content += "\n**章节概览**："
+        for ch in chapters[:5]:
+            content += f"\n  - {ch.get('title', '')}"
+        if chapter_count > 5:
+            content += f"\n  ... 等{chapter_count}章"
+
+    memory.upgrade_to_long_term(content)
+    return jsonify({'result': f'课程"{title}"已保存到记忆'})
+
+
+@app.route('/api/ppt/generate', methods=['POST'])
+def generate_ppt():
+    """PPT生成接口"""
+    from ppt_generator import PPTGenerator
+    import os
+
+    data = request.json or {}
+    title = data.get('title', '未命名课程')
+    slides = data.get('slides', [])
+    theme = data.get('theme', 'teal')
+
+    if not slides:
+        return jsonify({'error': 'slides不能为空'}), 400
+
+    try:
+        generator = PPTGenerator(output_dir='generated_ppt')
+        output_path = generator.create_ppt(title, slides, theme)
+        filename = os.path.basename(output_path)
+        download_url = f'/api/ppt/download/{filename}'
+        return jsonify({'success': True, 'file': filename, 'download_url': download_url, 'path': output_path})
+    except Exception as e:
+        request_logger.error(f'[PPT] 生成失败: {e}')
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ppt/download/<filename>', methods=['GET'])
+def download_ppt(filename):
+    """PPT文件下载"""
+    import os
+    from flask import send_file
+    safe_filename = os.path.basename(filename)
+    ppt_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'generated_ppt')
+    file_path = os.path.join(ppt_dir, safe_filename)
+    if not os.path.exists(file_path):
+        return jsonify({'error': '文件不存在'}), 404
+    return send_file(file_path, as_attachment=True, download_name=safe_filename)
+
+
+@app.route('/api/ppt/list', methods=['GET'])
+def list_ppts():
+    """列出已生成的PPT文件"""
+    import os
+    ppt_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'generated_ppt')
+    if not os.path.exists(ppt_dir):
+        return jsonify({'files': []})
+    files = [f for f in os.listdir(ppt_dir) if f.endswith('.pptx') and not f.startswith('~$')]
+    files.sort(key=lambda f: os.path.getmtime(os.path.join(ppt_dir, f)), reverse=True)
+    return jsonify({'files': files})
+
+
+@app.route('/api/drafts', methods=['GET'])
+def list_drafts():
+    """列出所有草稿"""
+    return jsonify({'drafts': drafts_manager.list()})
+
+
+@app.route('/api/drafts/<draft_id>', methods=['GET'])
+def get_draft(draft_id):
+    """获取单个草稿"""
+    draft = drafts_manager.get(draft_id)
+    if not draft:
+        return jsonify({'error': 'Not found'}), 404
+    return jsonify(draft)
+
+
+@app.route('/api/drafts', methods=['POST'])
+def save_draft():
+    """保存草稿"""
+    data = request.json or {}
+    draft = drafts_manager.save(data)
+    return jsonify(draft)
+
+
+@app.route('/api/drafts/<draft_id>', methods=['DELETE'])
+def delete_draft(draft_id):
+    """删除草稿"""
+    if drafts_manager.delete(draft_id):
+        return jsonify({'success': True})
+    return jsonify({'error': 'Not found'}), 404
+
+
+@app.route('/api/chat/stream', methods=['POST'])
+def chat_stream():
+    """流式聊天接口"""
+    request_logger.info('=' * 50)
+    request_logger.info('[STREAM] 收到流式聊天请求')
+    request_logger.info(f'[STREAM] 请求数据: {request.json}')
+
+    data = request.json
+    message = data.get('message', '').strip()
+    session_id = data.get('session_id', 'default')
+
+    request_logger.info(f'[STREAM] session_id: {session_id}')
+    request_logger.info(f'[STREAM] message: {message[:100]}...' if len(message) > 100 else f'[STREAM] message: {message}')
+
+    if not message:
+        request_logger.warning('[STREAM] 消息为空，返回 400')
+        return jsonify({'error': '消息不能为空'}), 400
+
+    request_logger.info('[STREAM] 获取 Agent 实例')
+    agent = get_agent(session_id)
+
+    def generate():
+        request_logger.info('[STREAM] 调用 agent.chat() - stream=True')
+        result = agent.chat(message, stream=True)
+
+        # 优先检查是否是 PPT 预览数据字典（注意：字典也有 __iter__，必须先检查）
+        if isinstance(result, dict) and result.get('type') == 'ppt_preview':
+            request_logger.info('[STREAM] 检测到 PPT 预览数据类型（直接字典）')
+            request_logger.info(f'[STREAM] PPT 共 {result.get("total_pages", 0)} 页，准备分页发送')
+
+            # 1. 发送开始信号（元数据）
+            start_msg = {
+                'type': 'ppt_preview_start',
+                'filename': result.get('filename'),
+                'total_pages': result.get('total_pages'),
+                'message': result.get('message', '')
+            }
+            yield f"data: {json.dumps(start_msg, ensure_ascii=False)}\n\n"
+            request_logger.info(f'[STREAM] 发送 ppt_preview_start: {result.get("filename")}')
+
+            # 2. 逐页发送幻灯片数据（每页单独一条消息，避免大数据被分割）
+            for slide in result.get('slides', []):
+                slide_msg = {
+                    'type': 'ppt_slide',
+                    'page': slide.get('page'),
+                    'base64': slide.get('base64'),
+                    'title': slide.get('title', f'第 {slide.get("page")} 页')
+                }
+                yield f"data: {json.dumps(slide_msg, ensure_ascii=False)}\n\n"
+                request_logger.debug(f'[STREAM] 发送 ppt_slide: page {slide.get("page")}')
+
+            # 3. 发送结束信号
+            yield f"data: {json.dumps({'type': 'ppt_preview_end'}, ensure_ascii=False)}\n\n"
+            yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
+            request_logger.info(f'[STREAM] PPT 预览数据分页发送完成，共 {result.get("total_pages", 0)} 页')
+
+        # 检查是否是生成器/迭代器（PPT制作返回生成器：先输出大纲，再输出预览）
+        elif hasattr(result, '__iter__') and not isinstance(result, (str, bytes, dict)):
+            request_logger.info('[STREAM] 检测到生成器/迭代器类型')
+            chunk_count = 0
+
+            for item in result:
+                chunk_count += 1
+
+                # 情况1：PPT 预览数据字典（制作PPT的最终输出）
+                if isinstance(item, dict) and item.get('type') == 'ppt_preview':
+                    request_logger.info(f'[STREAM] 生成器 item {chunk_count}: PPT 预览数据，共 {item.get("total_pages", 0)} 页')
+
+                    # 1. 发送开始信号（元数据）
+                    start_msg = {
+                        'type': 'ppt_preview_start',
+                        'filename': item.get('filename'),
+                        'total_pages': item.get('total_pages'),
+                        'message': item.get('message', '')
+                    }
+                    yield f"data: {json.dumps(start_msg, ensure_ascii=False)}\n\n"
+
+                    # 2. 逐页发送幻灯片数据
+                    for slide in item.get('slides', []):
+                        slide_msg = {
+                            'type': 'ppt_slide',
+                            'page': slide.get('page'),
+                            'base64': slide.get('base64'),
+                            'title': slide.get('title', f'第 {slide.get("page")} 页')
+                        }
+                        yield f"data: {json.dumps(slide_msg, ensure_ascii=False)}\n\n"
+
+                    # 3. 发送结束信号
+                    yield f"data: {json.dumps({'type': 'ppt_preview_end'}, ensure_ascii=False)}\n\n"
+
+                # 情况2：字符串（大纲文本或其他消息）
+                elif isinstance(item, str):
+                    request_logger.debug(f'[STREAM] 生成器 item {chunk_count}: 字符串，长度 {len(item)}')
+                    yield f"data: {json.dumps({'chunk': item}, ensure_ascii=False)}\n\n"
+
+                # 情况3：字典（内容生成完成数据）
+                elif isinstance(item, dict) and item.get('type') in ('content_complete', 'video_complete', 'graphic_complete'):
+                    request_logger.info(f'[STREAM] 生成器 item {chunk_count}: 内容生成完成数据 type={item.get("type")}')
+                    # 发送内容生成完成信号
+                    content_data = item.get('data', {})
+                    yield f"data: {json.dumps({'type': item.get('type'), 'data': content_data}, ensure_ascii=False)}\n\n"
+
+                # 情况4：音频数据（单独发送）- 大文件数据在流式传输中可能分割，需要特殊处理
+                elif isinstance(item, dict) and item.get('type') == 'video_audio_data':
+                    request_logger.info(f'[STREAM] 生成器 item {chunk_count}: 视频音频数据 (base64长度: {len(item.get("audio_base64", ""))})')
+                    print(f"[DEBUG APP] 收到音频数据，准备发送，base64长度: {len(item.get('audio_base64', ''))}")
+                    # 使用流式方式发送大数据，避免一次发送过多数据导致缓冲问题
+                    audio_data = item.get('audio_base64', '')
+                    voiceover_text = item.get('voiceover_text', '')
+                    # 分段发送音频数据
+                    yield f"data: {json.dumps({'type': 'video_audio_data', 'audio_base64': audio_data, 'voiceover_text': voiceover_text}, ensure_ascii=False)}\n\n"
+
+                # 情况5：图片数据（单独发送）
+                elif isinstance(item, dict) and item.get('type') == 'graphic_image_data':
+                    request_logger.info(f'[STREAM] 生成器 item {chunk_count}: 图文图片数据 (base64长度: {len(item.get("image_base64", ""))})')
+                    print(f"[DEBUG APP] 收到图片数据，准备发送，base64长度: {len(item.get('image_base64', ''))}")
+                    image_data = item.get('image_base64', '')
+                    prompt = item.get('prompt', '')
+                    yield f"data: {json.dumps({'type': 'graphic_image_data', 'image_base64': image_data, 'prompt': prompt}, ensure_ascii=False)}\n\n"
+
+                # 其他情况：忽略
+                else:
+                    request_logger.warning(f'[STREAM] 生成器 item {chunk_count}: 未知类型 {type(item)}')
+
+            yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
+            request_logger.info(f'[STREAM] 生成器处理完成，共 {chunk_count} 个 items')
+
+        # 纯字符串响应
+        elif isinstance(result, str):
+            request_logger.info('[STREAM] 检测到字符串响应类型')
+            yield f"data: {json.dumps({'chunk': result}, ensure_ascii=False)}\n\n"
+            yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
+            request_logger.info('[STREAM] 字符串响应发送完成')
+
+        # 其他情况（流式响应生成器）
+        else:
+            request_logger.info('[STREAM] 开始流式传输响应（原生流）')
+            chunk_count = 0
+            for chunk in result:
+                chunk_count += 1
+                yield f"data: {json.dumps({'chunk': chunk}, ensure_ascii=False)}\n\n"
+                request_logger.debug(f'[STREAM] 发送 chunk {chunk_count}: {chunk[:50]}...' if len(chunk) > 50 else f'[STREAM] 发送 chunk {chunk_count}: {chunk}')
+            yield f"data: {json.dumps({'done': True}, ensure_ascii=False)}\n\n"
+            request_logger.info(f'[STREAM] 流式传输完成，共发送 {chunk_count} 个 chunks')
+
+    request_logger.info('[STREAM] 返回流式响应')
+    # 使用分块传输编码，确保大数据能够实时流式传输
+    response = Response(generate(), mimetype='text/event-stream')
+    response.headers['X-Accel-Buffering'] = 'no'  # 禁用 Nginx 缓冲
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
+
+
+@app.route('/api/clear', methods=['POST'])
+def clear_history():
+    """清空对话历史"""
+    request_logger.info('=' * 50)
+    request_logger.info('[CLEAR] 收到清空历史请求')
+    request_logger.info(f'[CLEAR] 请求数据: {request.json}')
+
+    data = request.json
+    session_id = data.get('session_id', 'default')
+    request_logger.info(f'[CLEAR] session_id: {session_id}')
+
+    if session_id in sessions:
+        request_logger.info(f'[CLEAR] 清空 session {session_id} 的历史')
+        sessions[session_id].clear_history()
+        # 同时清除会话记录文件
+        sessions[session_id].memory.clear_session_file()
+        request_logger.info('[CLEAR] 历史已清空')
+    else:
+        request_logger.warning(f'[CLEAR] session {session_id} 不存在，无需清空')
+
+    return jsonify({'success': True, 'message': '历史已清空'})
+
+
+@app.route('/api/history', methods=['GET'])
+def get_history():
+    """获取对话历史"""
+    session_id = request.args.get('session_id', 'default')
+    request_logger.info('=' * 50)
+    request_logger.info(f'[HISTORY] 收到获取历史请求, session_id: {session_id}')
+
+    agent = get_agent(session_id)
+    history = agent.get_history()
+    request_logger.info(f'[HISTORY] 返回历史记录，当前共 {len(history)} 条消息')
+
+    return jsonify({
+        'history': agent.get_history()
+    })
+
+
+@app.route('/api/models', methods=['GET'])
+def get_models():
+    """获取可用模型列表"""
+    return jsonify({
+        'models': [
+            {'id': 'MiniMax-M2.5-highspeed', 'name': 'MiniMax-M2.5-highspeed', 'description': 'MiniMax M2.5 高速模型'},
+        ]
+    })
+
+
+# ==================== 设置 API ====================
+
+DEFAULT_SETTINGS = {
+    'mimo_voice': 'mimo_default',
+    'mimo_style': '',
+    'aspect_ratio': '3:4',
+    'cover_style': 'infographic'
+}
+
+# 存储用户设置（简单实现，生产环境应使用数据库）
+user_settings = {}
+
+@app.route('/api/settings', methods=['GET'])
+def get_settings():
+    """获取当前设置"""
+    # 优先从 config.json 加载已保存的设置
+    memory = get_memory_manager()
+    config = memory.get_config()
+    saved_settings = config.get('content_settings', {})
+    settings = {**DEFAULT_SETTINGS, **saved_settings}
+
+    return jsonify({
+        'settings': settings,
+        'options': {
+            'mimo_voice': [
+                {'value': 'mimo_default', 'label': 'MiMo-默认'},
+                {'value': 'default_zh', 'label': 'MiMo-中文女声'},
+                {'value': 'default_en', 'label': 'MiMo-英文女声'}
+            ],
+            'mimo_style': [
+                {'value': '', 'label': '无（默认）'},
+                {'value': '开心', 'label': '开心'},
+                {'value': '悲伤', 'label': '悲伤'},
+                {'value': '生气', 'label': '生气'},
+                {'value': '悄悄话', 'label': '悄悄话'},
+                {'value': '东北话', 'label': '东北话'},
+                {'value': '四川话', 'label': '四川话'},
+                {'value': '粤语', 'label': '粤语'}
+            ],
+            'aspect_ratio': [
+                {'value': '3:4', 'label': '3:4 竖图（小红书推荐）'},
+                {'value': '1:1', 'label': '1:1 方图'}
+            ],
+            'cover_style': [
+                {'value': 'infographic', 'label': '一图流文字版'},
+                {'value': 'minimal', 'label': '极简纯图版'}
+            ]
+        }
+    })
+
+
+@app.route('/api/settings', methods=['POST'])
+def update_settings():
+    """更新设置"""
+    global DEFAULT_SETTINGS
+    data = request.json
+    new_settings = data.get('settings', {})
+
+    # 更新设置
+    for key, value in new_settings.items():
+        if key in DEFAULT_SETTINGS:
+            DEFAULT_SETTINGS[key] = value
+
+    # 同步更新到所有已创建的 agent
+    for session_id, agent in sessions.items():
+        agent.update_content_settings(DEFAULT_SETTINGS)
+
+    # 同步持久化到 config.json
+    memory = get_memory_manager()
+    config = memory.get_config()
+    if 'content_settings' not in config:
+        config['content_settings'] = {}
+    config['content_settings'].update(new_settings)
+    memory.update_config(config)
+
+    request_logger.info(f'[SETTINGS] 设置已更新: {DEFAULT_SETTINGS}')
+    return jsonify({'success': True, 'settings': DEFAULT_SETTINGS})
+
+
+# ==================== 文件管理 API ====================
+
+@app.route('/api/files', methods=['GET'])
+def get_files():
+    """获取所有生成的文件列表"""
+    request_logger.info('[FILES] 获取文件列表')
+
+    files = []
+
+    # 扫描 PPT 文件
+    ppt_dir = "generated_ppt"
+    if os.path.exists(ppt_dir):
+        for f in os.listdir(ppt_dir):
+            if f.endswith('.pptx') and not f.startswith('~$'):
+                filepath = os.path.join(ppt_dir, f)
+                stat = os.stat(filepath)
+                files.append({
+                    'id': f'ppt_{f}',
+                    'name': f,
+                    'type': 'ppt',
+                    'type_label': 'PPT',
+                    'path': filepath,
+                    'size': stat.st_size,
+                    'size_formatted': f"{stat.st_size / 1024:.1f} KB",
+                    'created': datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M"),
+                    'icon': '📊'
+                })
+
+    # 扫描讲义文件
+    lecture_dir = "generated_lectures"
+    if os.path.exists(lecture_dir):
+        for f in os.listdir(lecture_dir):
+            if f.endswith('.md'):
+                filepath = os.path.join(lecture_dir, f)
+                stat = os.stat(filepath)
+                files.append({
+                    'id': f'lecture_{f}',
+                    'name': f,
+                    'type': 'lecture',
+                    'type_label': '讲义',
+                    'path': filepath,
+                    'size': stat.st_size,
+                    'size_formatted': f"{stat.st_size / 1024:.1f} KB",
+                    'created': datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M"),
+                    'icon': '📚'
+                })
+
+    # 扫描图文内容文本文件
+    content_text_dir = "generated_content/text"
+    if os.path.exists(content_text_dir):
+        for f in os.listdir(content_text_dir):
+            if f.endswith('.md'):
+                filepath = os.path.join(content_text_dir, f)
+                stat = os.stat(filepath)
+                # 判断是视频脚本还是小红书文案
+                type_label = '视频脚本' if f.startswith('video_script') else '小红书文案'
+                files.append({
+                    'id': f'content_text_{f}',
+                    'name': f,
+                    'type': 'content_text',
+                    'type_label': type_label,
+                    'path': filepath,
+                    'size': stat.st_size,
+                    'size_formatted': f"{stat.st_size / 1024:.1f} KB",
+                    'created': datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M"),
+                    'icon': '📝'
+                })
+
+    # 扫描音频文件
+    content_audio_dir = "generated_content/audio"
+    if os.path.exists(content_audio_dir):
+        for f in os.listdir(content_audio_dir):
+            if f.endswith('.wav'):
+                filepath = os.path.join(content_audio_dir, f)
+                stat = os.stat(filepath)
+                files.append({
+                    'id': f'content_audio_{f}',
+                    'name': f,
+                    'type': 'content_audio',
+                    'type_label': '音频',
+                    'path': filepath,
+                    'size': stat.st_size,
+                    'size_formatted': f"{stat.st_size / 1024:.1f} KB",
+                    'created': datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M"),
+                    'icon': '🔊'
+                })
+
+    # 扫描图片文件
+    content_image_dir = "generated_content/images"
+    if os.path.exists(content_image_dir):
+        for f in os.listdir(content_image_dir):
+            if f.endswith(('.jpeg', '.jpg', '.png')):
+                filepath = os.path.join(content_image_dir, f)
+                stat = os.stat(filepath)
+                files.append({
+                    'id': f'content_image_{f}',
+                    'name': f,
+                    'type': 'content_image',
+                    'type_label': '封面图',
+                    'path': filepath,
+                    'size': stat.st_size,
+                    'size_formatted': f"{stat.st_size / 1024:.1f} KB",
+                    'created': datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M"),
+                    'icon': '🖼️'
+                })
+
+    # 按时间倒序排列
+    files.sort(key=lambda x: x['created'], reverse=True)
+
+    request_logger.info(f'[FILES] 找到 {len(files)} 个文件')
+    return jsonify({'files': files})
+
+
+@app.route('/api/files/delete', methods=['POST'])
+def delete_file():
+    """删除文件"""
+    data = request.json
+    file_path = data.get('path', '')
+
+    request_logger.info(f'[FILES] 删除文件请求: {file_path}')
+
+    if not file_path or not os.path.exists(file_path):
+        return jsonify({'success': False, 'error': '文件不存在'}), 404
+
+    # 安全检查：确保文件在允许的目录中
+    allowed_dirs = ['generated_ppt', 'generated_lectures', 'generated_content']
+    is_allowed = any(file_path.startswith(d) or f'/{d}/' in file_path or f'\\{d}\\' in file_path for d in allowed_dirs)
+
+    if not is_allowed:
+        request_logger.warning(f'[FILES] 非法删除路径: {file_path}')
+        return jsonify({'success': False, 'error': '无权删除此文件'}), 403
+
+    try:
+        os.remove(file_path)
+        request_logger.info(f'[FILES] 文件已删除: {file_path}')
+        return jsonify({'success': True, 'message': '文件已删除'})
+    except Exception as e:
+        request_logger.error(f'[FILES] 删除失败: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/files/rename', methods=['POST'])
+def rename_file():
+    """重命名文件"""
+    data = request.json
+    old_path = data.get('path', '')
+    new_name = data.get('new_name', '')
+
+    request_logger.info(f'[FILES] 重命名文件: {old_path} -> {new_name}')
+
+    if not old_path or not os.path.exists(old_path):
+        return jsonify({'success': False, 'error': '文件不存在'}), 404
+
+    if not new_name or '/' in new_name or '\\' in new_name:
+        return jsonify({'success': False, 'error': '无效的文件名'}), 400
+
+    # 安全检查
+    allowed_dirs = ['generated_ppt', 'generated_lectures', 'generated_content']
+    is_allowed = any(old_path.startswith(d) or f'/{d}/' in old_path or f'\\{d}\\' in old_path for d in allowed_dirs)
+
+    if not is_allowed:
+        request_logger.warning(f'[FILES] 非法重命名路径: {old_path}')
+        return jsonify({'success': False, 'error': '无权重命名此文件'}), 403
+
+    try:
+        # 获取文件扩展名
+        old_ext = os.path.splitext(old_path)[1]
+        # 确保新文件名有正确的扩展名
+        if not new_name.endswith(old_ext):
+            new_name += old_ext
+
+        new_path = os.path.join(os.path.dirname(old_path), new_name)
+
+        if os.path.exists(new_path):
+            return jsonify({'success': False, 'error': '目标文件已存在'}), 400
+
+        os.rename(old_path, new_path)
+        request_logger.info(f'[FILES] 文件已重命名: {old_path} -> {new_path}')
+        return jsonify({'success': True, 'message': '文件已重命名', 'new_path': new_path})
+    except Exception as e:
+        request_logger.error(f'[FILES] 重命名失败: {e}')
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/files/clear', methods=['POST'])
+def clear_all_files():
+    """清空所有生成的文件"""
+    data = request.json
+    confirm = data.get('confirm', False)
+
+    if not confirm:
+        return jsonify({'success': False, 'error': '需要确认清空操作'}), 400
+
+    request_logger.info('[FILES] 收到清空所有文件请求')
+
+    allowed_dirs = ['generated_ppt', 'generated_lectures', 'generated_content']
+    deleted_count = 0
+    errors = []
+
+    for dir_name in allowed_dirs:
+        dir_path = dir_name
+        if os.path.exists(dir_path):
+            try:
+                # 递归遍历所有文件和子目录
+                for root, dirs, files in os.walk(dir_path):
+                    for f in files:
+                        file_path = os.path.join(root, f)
+                        # 安全检查：确保文件在允许的目录中
+                        if os.path.isfile(file_path):
+                            try:
+                                os.remove(file_path)
+                                deleted_count += 1
+                            except Exception as e:
+                                errors.append(f'删除 {file_path} 失败: {e}')
+            except Exception as e:
+                errors.append(f'清空目录 {dir_path} 失败: {e}')
+
+    request_logger.info(f'[FILES] 清空完成，共删除 {deleted_count} 个文件')
+    if errors:
+        request_logger.error(f'[FILES] 清空过程中的错误: {errors}')
+
+    return jsonify({
+        'success': True,
+        'message': f'已清空 {deleted_count} 个文件',
+        'deleted_count': deleted_count,
+        'errors': errors
+    })
+
+
+from drafts_manager import DraftsManager
+
+drafts_manager = DraftsManager()
+
+# ==================== 记忆设置 API ====================
+
+@app.route('/api/memory', methods=['GET'])
+def get_memory_summary_api():
+    """获取记忆摘要"""
+    memory = get_memory_manager()
+    summary = memory.get_memory_summary()
+    return jsonify({'summary': summary})
+
+
+@app.route('/api/memory/save', methods=['POST'])
+def save_memory_api():
+    """保存当前对话到记忆"""
+    data = request.json
+    session_id = data.get('session_id', 'default')
+    agent = get_agent(session_id)
+    result = agent._save_conversation_essence()
+    return jsonify({'result': result})
+
+
+@app.route('/api/memory/clear', methods=['POST'])
+def clear_memory_api():
+    """清除长期记忆"""
+    memory = get_memory_manager()
+    memory.clear_long_term_memory()
+    return jsonify({'success': True})
+
+
+@app.route('/api/memory/clear-daily', methods=['POST'])
+def clear_daily_api():
+    """清除当前会话记录"""
+    data = request.json
+    session_id = data.get('session_id', 'default')
+    agent = get_agent(session_id)
+    agent.clear_history()
+    agent.memory.clear_session_file()
+    return jsonify({'success': True})
+
+
+@app.route('/api/memory/search', methods=['GET'])
+def search_memory_api():
+    """搜索记忆"""
+    keyword = request.args.get('keyword', '')
+    memory = get_memory_manager()
+    results = memory.search_memory(keyword)
+    return jsonify({'results': results})
+
+
+# PPT 预览图加载
+@app.route('/api/ppt-preview/<filename>', methods=['GET'])
+def get_ppt_preview(filename):
+    """加载 PPT 预览图"""
+    import base64
+    from urllib.parse import unquote
+    filename = unquote(filename)
+    # 移除 .pptx 扩展名，因为预览目录是用 stem（有别于 name）创建的
+    name_without_ext = filename.replace('.pptx', '')
+    preview_dir = os.path.join(os.path.dirname(__file__), 'ppt_previews', name_without_ext)
+    slides = []
+    if os.path.exists(preview_dir):
+        for f in sorted(os.listdir(preview_dir)):
+            if f.endswith('.png'):
+                path = os.path.join(preview_dir, f)
+                with open(path, 'rb') as img:
+                    b64 = base64.b64encode(img.read()).decode('utf-8')
+                    slides.append({'page': f.replace('slide_', '').replace('.png', ''), 'data': b64})
+    return jsonify({'slides': slides})
+
+# 图文封面图加载
+@app.route('/api/graphic/image/<filename>', methods=['GET'])
+def get_graphic_image(filename):
+    """加载图文封面图"""
+    import base64
+    from urllib.parse import unquote
+    filename = unquote(filename)
+    print(f"[DEBUG] 加载图文图片请求: filename={filename}")
+    path = os.path.join(os.path.dirname(__file__), 'generated_content', 'images', filename)
+    print(f"[DEBUG] 图片完整路径: {path}, 存在: {os.path.exists(path)}")
+    if os.path.exists(path):
+        with open(path, 'rb') as img:
+            b64 = base64.b64encode(img.read()).decode('utf-8')
+            return jsonify({'image': b64})
+    return jsonify({'image': None})
+
+# 视频音频加载
+@app.route('/api/video/audio/<filename>', methods=['GET'])
+def get_video_audio(filename):
+    """加载视频音频"""
+    import base64
+    from urllib.parse import unquote
+    filename = unquote(filename)
+    path = os.path.join(os.path.dirname(__file__), 'generated_content', 'audio', filename)
+    if os.path.exists(path):
+        with open(path, 'rb') as audio:
+            b64 = base64.b64encode(audio.read()).decode('utf-8')
+            return jsonify({'audio': b64})
+    return jsonify({'audio': None})
+
+
+if __name__ == '__main__':
+    app_logger.info('=' * 60)
+    app_logger.info('🎓 MiniMax Agent Web 服务启动中...')
+    app_logger.info('=' * 60)
+    app_logger.info(f'📅 启动时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+    app_logger.info('🌐 访问地址: http://127.0.0.1:5000')
+    app_logger.info('📋 调试模式: True')
+    app_logger.info('=' * 60)
+
+    # 添加请求日志中间件
+    @app.before_request
+    def log_before_request():
+        request_logger.debug(f'[BEFORE] {request.method} {request.path} - 来自 {request.remote_addr}')
+
+    @app.after_request
+    def log_after_request(response):
+        request_logger.debug(f'[AFTER] {request.method} {request.path} - 状态码: {response.status_code}')
+        return response
+
+    app_logger.info('✅ 所有路由注册完成')
+    app_logger.info('=' * 60)
+
+    app.run(host='0.0.0.0', port=5000, debug=False)

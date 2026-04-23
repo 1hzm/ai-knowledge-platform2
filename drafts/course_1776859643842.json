@@ -1,0 +1,147 @@
+{
+  "id": "course_1776859643842",
+  "name": "英语字母基础课程",
+  "createdAt": "2026-04-22T12:07:23.842Z",
+  "updatedAt": "2026-04-23T23:27:34.970433",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 15,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习前6个字母的大小写认读和基本发音",
+            "duration": 8,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "字母形态识别",
+              "元音字母发音"
+            ],
+            "summary": "掌握Aa到Ff的字母形态和发音规律",
+            "title": "认识字母Aa-Ff"
+          },
+          {
+            "content": "练习前6个字母的正确书写格式",
+            "duration": 7,
+            "id": "1-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "大写字母书写",
+              "小写字母书写"
+            ],
+            "summary": "掌握字母书写的笔顺和规范",
+            "title": "字母书写练习"
+          }
+        ],
+        "title": "字母认知入门"
+      },
+      {
+        "duration": 15,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习第7-12个字母的大小写认读和发音",
+            "duration": 8,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "辅音字母发音",
+              "字母组合规律"
+            ],
+            "summary": "掌握Gg到Ll的字母形态和发音规律",
+            "title": "认识字母Gg-Ll"
+          },
+          {
+            "content": "练习字母Gg到Ll的正确书写",
+            "duration": 7,
+            "id": "2-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "字母连写",
+              "书写速度提升"
+            ],
+            "summary": "巩固字母书写规范",
+            "title": "字母书写练习"
+          }
+        ],
+        "title": "字母进阶学习"
+      },
+      {
+        "duration": 15,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习第13-18个字母的大小写认读和发音",
+            "duration": 8,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "字母形态辨析",
+              "发音规则记忆"
+            ],
+            "summary": "掌握Mm到Rr的字母形态和发音规律",
+            "title": "认识字母Mm-Rr"
+          },
+          {
+            "content": "通过互动游戏巩固Mm到Rr的学习",
+            "duration": 7,
+            "id": "3-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "字母配对",
+              "听音辨字母"
+            ],
+            "summary": "趣味方式强化字母记忆",
+            "title": "字母游戏互动"
+          }
+        ],
+        "title": "字母系统掌握"
+      },
+      {
+        "duration": 15,
+        "id": "4",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "学习最后9个字母的大小写认读和发音",
+            "duration": 8,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "字母序列记忆",
+              "完整字母表背诵"
+            ],
+            "summary": "掌握Ss到Zz的字母形态和发音规律",
+            "title": "认识字母Ss-Zz"
+          },
+          {
+            "content": "全面复习和测试26个字母的掌握情况",
+            "duration": 7,
+            "id": "4-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "字母顺序",
+              "大小写对应",
+              "基础发音"
+            ],
+            "summary": "通过测试检验学习成果",
+            "title": "26字母综合复习"
+          }
+        ],
+        "title": "字母综合提升"
+      }
+    ],
+    "duration": 60,
+    "grade": "零基础学员",
+    "subject": "英语",
+    "teachingGoal": "掌握26个英文字母的认读、书写和基本发音",
+    "title": "英语字母基础课程"
+  },
+  "contents": [],
+  "topic": "英语字母基础课程",
+  "preview": "英语"
+}

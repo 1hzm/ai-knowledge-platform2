@@ -1,0 +1,154 @@
+{
+  "id": "course_1776852437015",
+  "name": "Python编程入门",
+  "createdAt": "2026-04-22T10:07:17.015Z",
+  "updatedAt": "2026-04-23T23:27:34.963427",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "了解Python语言的起源、特点和应用领域",
+            "duration": 5,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "Python的发展历史",
+              "语言特点",
+              "应用领域"
+            ],
+            "summary": "认识Python编程语言及其广泛的应用场景",
+            "title": "Python简介"
+          },
+          {
+            "content": "学习安装Python和配置编程环境",
+            "duration": 15,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "Python安装",
+              "IDLE使用",
+              "第一个程序"
+            ],
+            "summary": "掌握Python解释器安装和IDLE使用",
+            "title": "开发环境搭建"
+          }
+        ],
+        "title": "初识Python"
+      },
+      {
+        "duration": 25,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "掌握变量的定义、命名规则和赋值方法",
+            "duration": 12,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "变量命名规范",
+              "变量赋值",
+              "变量调用"
+            ],
+            "summary": "理解变量是存储数据的容器，学会创建和使用变量",
+            "title": "变量的概念与使用"
+          },
+          {
+            "content": "学习数值、字符串等基本数据类型",
+            "duration": 13,
+            "id": "2-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "整数和浮点数",
+              "字符串定义",
+              "数据类型转换"
+            ],
+            "summary": "掌握整数、浮点数、字符串的表示和基本操作",
+            "title": "常见数据类型"
+          }
+        ],
+        "title": "变量与数据类型"
+      },
+      {
+        "duration": 25,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "掌握加、减、乘、除等基本算术运算",
+            "duration": 12,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "加减乘除运算",
+              "整除与取余",
+              "运算符优先级"
+            ],
+            "summary": "学会使用算术运算符进行数学计算",
+            "title": "算术运算符"
+          },
+          {
+            "content": "学习比较运算符和逻辑运算符的使用",
+            "duration": 13,
+            "id": "3-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "比较运算符",
+              "逻辑运算符",
+              "复合条件"
+            ],
+            "summary": "掌握条件判断中常用的比较和逻辑运算",
+            "title": "比较和逻辑运算符"
+          }
+        ],
+        "title": "运算符与表达式"
+      },
+      {
+        "duration": 20,
+        "id": "4",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "掌握if语句实现程序分支结构",
+            "duration": 10,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "if语句语法",
+              "else子句",
+              "elif多分支"
+            ],
+            "summary": "学会使用条件语句控制程序执行路径",
+            "title": "条件语句"
+          },
+          {
+            "content": "学习for循环和while循环结构",
+            "duration": 10,
+            "id": "4-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "for循环",
+              "while循环",
+              "break和continue"
+            ],
+            "summary": "掌握重复执行代码的循环结构",
+            "title": "循环语句"
+          }
+        ],
+        "title": "控制流程"
+      }
+    ],
+    "duration": 90,
+    "grade": "初中一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握Python基础语法和简单程序编写能力",
+    "title": "Python编程入门"
+  },
+  "contents": [],
+  "topic": "Python编程入门",
+  "preview": "信息技术"
+}

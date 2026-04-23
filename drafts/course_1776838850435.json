@@ -1,0 +1,154 @@
+{
+  "id": "course_1776838850435",
+  "name": "Python编程入门",
+  "createdAt": "2026-04-22T06:20:50.435Z",
+  "updatedAt": "2026-04-23T23:27:34.976432",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 25,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "Python简介、应用领域、开发环境配置",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "Python语言优势",
+              "安装与环境配置",
+              "第一个程序print"
+            ],
+            "summary": "了解Python特点与用途，掌握IDLE或VS Code基本操作",
+            "title": "认识Python"
+          },
+          {
+            "content": "代码注释、缩进规则、标识符命名规范",
+            "duration": 15,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "单行与多行注释",
+              "缩进重要性",
+              "标识符命名规则"
+            ],
+            "summary": "掌握Python基本书写规范，避免常见语法错误",
+            "title": "语法基础"
+          }
+        ],
+        "title": "Python基础入门"
+      },
+      {
+        "duration": 25,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "变量概念、赋值操作、数据类型初识",
+            "duration": 12,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "变量创建",
+              "数据类型检测type()",
+              "多变量赋值"
+            ],
+            "summary": "理解变量是存储数据的容器，掌握基本赋值方法",
+            "title": "变量与赋值"
+          },
+          {
+            "content": "整数、浮点数、字符串、布尔值的定义与使用",
+            "duration": 13,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "int/float/str/bool",
+              "类型转换函数",
+              "字符串格式化"
+            ],
+            "summary": "掌握四种基本数据类型的特点和转换方法",
+            "title": "基本数据类型"
+          }
+        ],
+        "title": "数据类型与变量"
+      },
+      {
+        "duration": 22,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "if/elif/else结构、多重条件判断",
+            "duration": 12,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "if结构",
+              "elif多分支",
+              "嵌套条件"
+            ],
+            "summary": "能够根据条件选择执行不同代码块",
+            "title": "条件语句"
+          },
+          {
+            "content": "for循环、while循环、break与continue",
+            "duration": 10,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "for...in遍历",
+              "while条件循环",
+              "循环控制break/continue"
+            ],
+            "summary": "掌握重复执行代码的方法，理解循环控制语句",
+            "title": "循环结构"
+          }
+        ],
+        "title": "流程控制"
+      },
+      {
+        "duration": 18,
+        "id": "4",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "函数声明、参数传递、返回值",
+            "duration": 10,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "def关键字",
+              "参数与返回值",
+              "函数调用"
+            ],
+            "summary": "理解函数封装代码的思想，掌握自定义函数的方法",
+            "title": "函数定义与调用"
+          },
+          {
+            "content": "小程序开发：猜数字游戏",
+            "duration": 8,
+            "id": "4-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "程序设计思路",
+              "代码整合能力",
+              "调试方法"
+            ],
+            "summary": "综合运用变量、条件、循环、函数完成完整程序",
+            "title": "综合实践"
+          }
+        ],
+        "title": "函数基础"
+      }
+    ],
+    "duration": 90,
+    "grade": "高中一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握Python基础语法，能够独立编写简单的程序解决问题",
+    "title": "Python编程入门"
+  },
+  "contents": [],
+  "topic": "Python编程入门",
+  "preview": "信息技术"
+}

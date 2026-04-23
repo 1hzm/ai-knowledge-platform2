@@ -1,0 +1,115 @@
+{
+  "id": "course_1776858519191",
+  "name": "信息技术基础",
+  "createdAt": "2026-04-22T11:48:39.191Z",
+  "updatedAt": "2026-04-23T23:27:35.003432",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 30,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "了解计算机的硬件组成和软件分类",
+            "duration": 15,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "计算机硬件组成",
+              "系统软件与应用软件"
+            ],
+            "summary": "掌握计算机由硬件系统和软件系统两大部分组成",
+            "title": "认识计算机系统"
+          },
+          {
+            "content": "学习正确的计算机开关机操作和安全使用规范",
+            "duration": 15,
+            "id": "1-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "开关机正确顺序",
+              "安全使用规范"
+            ],
+            "summary": "养成良好的计算机使用习惯",
+            "title": "计算机操作规范"
+          }
+        ],
+        "title": "计算机基础知识"
+      },
+      {
+        "duration": 30,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "了解桌面图标、任务栏和开始菜单的功能",
+            "duration": 15,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "桌面图标类型",
+              "任务栏功能"
+            ],
+            "summary": "熟悉Windows操作系统基本界面布局",
+            "title": "认识Windows桌面"
+          },
+          {
+            "content": "掌握文件和文件夹的创建、命名、移动和删除操作",
+            "duration": 15,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "文件命名规则",
+              "文件夹操作"
+            ],
+            "summary": "能够正确管理和组织计算机中的文件",
+            "title": "文件管理操作"
+          }
+        ],
+        "title": "操作系统基础"
+      },
+      {
+        "duration": 30,
+        "id": "3",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "了解互联网的概念、发展历程和基本应用",
+            "duration": 15,
+            "id": "3-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "互联网定义",
+              "常见网络应用"
+            ],
+            "summary": "认识互联网在日常生活中的重要作用",
+            "title": "互联网概述"
+          },
+          {
+            "content": "学习网络安全基本知识和文明上网规范",
+            "duration": 15,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "密码安全",
+              "防范网络欺诈",
+              "文明上网"
+            ],
+            "summary": "树立网络安全意识，遵守网络道德规范",
+            "title": "网络安全与道德"
+          }
+        ],
+        "title": "网络基础知识"
+      }
+    ],
+    "duration": 90,
+    "grade": "初中一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握计算机基本操作技能和信息技术基础知识",
+    "title": "信息技术基础"
+  },
+  "contents": [],
+  "topic": "信息技术基础",
+  "preview": "信息技术"
+}

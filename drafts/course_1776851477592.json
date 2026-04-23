@@ -1,0 +1,146 @@
+{
+  "id": "course_1776851477592",
+  "name": "Java编程基础",
+  "createdAt": "2026-04-22T09:51:17.592Z",
+  "updatedAt": "2026-04-23T23:27:35.011617",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "介绍Java语言的发展历史、主要特点和应用领域",
+            "duration": 8,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "Java语言发展历程",
+              "Java三大平台区别",
+              "Java核心特性：跨平台、安全、面向对象"
+            ],
+            "summary": "了解Java语言的起源、核心优势及主要应用场景",
+            "title": "Java简介与特点"
+          },
+          {
+            "content": "安装JDK并配置环境变量，运行第一个Java程序",
+            "duration": 12,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "JDK下载与安装",
+              "环境变量配置",
+              "第一个Java程序编写与运行"
+            ],
+            "summary": "掌握JDK安装和环境配置，能够运行HelloWorld程序",
+            "title": "开发环境安装与配置"
+          }
+        ],
+        "title": "Java入门与环境搭建"
+      },
+      {
+        "duration": 35,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习Java的8种基本数据类型和引用数据类型，掌握变量声明与使用",
+            "duration": 12,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "基本数据类型：int、double、boolean等",
+              "变量声明与初始化",
+              "类型转换规则"
+            ],
+            "summary": "掌握Java数据类型的分类和变量的使用方法",
+            "title": "数据类型与变量"
+          },
+          {
+            "content": "学习Java中的各种运算符和表达式的使用",
+            "duration": 10,
+            "id": "2-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "算术运算符",
+              "关系运算符与逻辑运算符",
+              "赋值运算符与三元运算符"
+            ],
+            "summary": "熟练运用各类运算符进行数据运算",
+            "title": "运算符与表达式"
+          },
+          {
+            "content": "学习条件判断和循环结构，控制程序执行流程",
+            "duration": 13,
+            "id": "2-3",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "if-else条件判断",
+              "switch多分支选择",
+              "for循环与while循环"
+            ],
+            "summary": "掌握if-else、switch、for、while等控制语句",
+            "title": "流程控制语句"
+          }
+        ],
+        "title": "Java基础语法"
+      },
+      {
+        "duration": 35,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "理解类与对象的概念，掌握类的定义和对象的创建",
+            "duration": 15,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "类与对象的关系",
+              "类的定义结构",
+              "对象的创建与使用"
+            ],
+            "summary": "建立面向对象编程思维，能够定义类和创建对象",
+            "title": "类与对象"
+          },
+          {
+            "content": "学习封装的概念和构造方法的使用",
+            "duration": 10,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "封装的概念与意义",
+              "构造方法的定义",
+              "构造方法重载"
+            ],
+            "summary": "理解封装的意义，掌握构造方法的定义和重载",
+            "title": "封装与构造方法"
+          },
+          {
+            "content": "学习类的继承机制和多态特性",
+            "duration": 10,
+            "id": "3-3",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "extends关键字的使用",
+              "方法重写",
+              "多态的概念与应用"
+            ],
+            "summary": "掌握继承的实现方式和多态的应用",
+            "title": "继承与多态"
+          }
+        ],
+        "title": "面向对象基础"
+      }
+    ],
+    "duration": 90,
+    "grade": "大学一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握Java语言基础语法和面向对象编程思想，能够独立编写简单的Java程序",
+    "title": "Java编程基础"
+  },
+  "contents": [],
+  "topic": "Java编程基础",
+  "preview": "信息技术"
+}

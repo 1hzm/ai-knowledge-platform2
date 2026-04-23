@@ -1,0 +1,158 @@
+{
+  "id": "course_1776860483669",
+  "name": "Python编程基础",
+  "createdAt": "2026-04-22T12:21:23.669Z",
+  "updatedAt": "2026-04-23T23:27:34.978424",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "了解什么是编程以及编程在我们生活中的应用",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "编程的定义",
+              "编程在各领域的应用"
+            ],
+            "summary": "通过生活中的实例理解编程的概念和意义",
+            "title": "认识编程"
+          },
+          {
+            "content": "介绍Python语言的特点和应用场景",
+            "duration": 10,
+            "id": "1-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "Python语言特点",
+              "Python应用领域"
+            ],
+            "summary": "认识Python编程环境及其优势",
+            "title": "Python简介"
+          }
+        ],
+        "title": "编程初体验"
+      },
+      {
+        "duration": 25,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习变量的定义、赋值和命名规则",
+            "duration": 10,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "变量概念",
+              "变量命名规范"
+            ],
+            "summary": "掌握编程中变量的基本概念和使用方法",
+            "title": "变量的使用"
+          },
+          {
+            "content": "认识数字、字符串等基本数据类型",
+            "duration": 10,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "整数和浮点数",
+              "字符串类型"
+            ],
+            "summary": "了解不同数据类型的特点和用途",
+            "title": "数据类型"
+          },
+          {
+            "content": "学习不同数据类型之间的转换方法",
+            "duration": 5,
+            "id": "2-3",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "类型转换函数",
+              "转换注意事项"
+            ],
+            "summary": "掌握int、str、float等转换函数的使用",
+            "title": "数据类型转换"
+          }
+        ],
+        "title": "变量与数据"
+      },
+      {
+        "duration": 20,
+        "id": "3",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "学习加、减、乘、除等基本运算",
+            "duration": 10,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "基本算术运算",
+              "运算优先级"
+            ],
+            "summary": "掌握Python中的算术运算操作",
+            "title": "算术运算符"
+          },
+          {
+            "content": "学习大小比较和逻辑判断",
+            "duration": 10,
+            "id": "3-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "比较运算符",
+              "逻辑运算符"
+            ],
+            "summary": "理解条件判断中常用的比较和逻辑运算符",
+            "title": "比较与逻辑运算"
+          }
+        ],
+        "title": "运算符基础"
+      },
+      {
+        "duration": 25,
+        "id": "4",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "综合运用所学知识编写简单程序",
+            "duration": 15,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "程序设计思路",
+              "代码编写规范"
+            ],
+            "summary": "动手实践，编写一个完整的Python小程序",
+            "title": "小程序编写"
+          },
+          {
+            "content": "完成练习题目并解答疑惑",
+            "duration": 10,
+            "id": "4-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "练习完成",
+              "问题解答"
+            ],
+            "summary": "巩固所学内容，解决学习中的问题",
+            "title": "练习与答疑"
+          }
+        ],
+        "title": "实战练习"
+      }
+    ],
+    "duration": 90,
+    "grade": "初中一年级",
+    "subject": "信息技术",
+    "teachingGoal": "学生能够理解编程基本概念，掌握Python基础语法并能编写简单的程序",
+    "title": "Python编程基础"
+  },
+  "contents": [],
+  "topic": "Python编程基础",
+  "preview": "信息技术"
+}

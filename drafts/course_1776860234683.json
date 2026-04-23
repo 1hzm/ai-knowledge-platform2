@@ -1,0 +1,114 @@
+{
+  "id": "course_1776860234683",
+  "name": "信息技术基础",
+  "createdAt": "2026-04-22T12:17:14.683Z",
+  "updatedAt": "2026-04-23T23:27:34.990431",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 15,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "了解计算机硬件系统的基本组成",
+            "duration": 8,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "计算机硬件组成",
+              "主机箱内部主要部件"
+            ],
+            "summary": "认识计算机的硬件组成，包括主机、显示器、键盘、鼠标等外部设备的功能",
+            "title": "计算机的组成"
+          },
+          {
+            "content": "区分系统软件和应用软件",
+            "duration": 7,
+            "id": "1-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "操作系统功能",
+              "应用软件类型"
+            ],
+            "summary": "学习操作系统和应用程序的区别与作用",
+            "title": "软件系统分类"
+          }
+        ],
+        "title": "认识计算机系统"
+      },
+      {
+        "duration": 18,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "掌握桌面图标和窗口的基本操作方法",
+            "duration": 9,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "窗口基本操作",
+              "开始菜单使用"
+            ],
+            "summary": "学习打开、关闭、最小化、最大化窗口的操作技巧",
+            "title": "桌面和窗口操作"
+          },
+          {
+            "content": "学习文件和文件夹的创建、复制、移动和删除",
+            "duration": 9,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "文件基本操作",
+              "文件夹管理"
+            ],
+            "summary": "掌握资源管理器的使用方法，能进行基本的文件操作",
+            "title": "文件和文件夹管理"
+          }
+        ],
+        "title": "Windows基本操作"
+      },
+      {
+        "duration": 12,
+        "id": "3",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "了解网络连接方式和浏览器基本使用",
+            "duration": 7,
+            "id": "3-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "网络连接方式",
+              "浏览器基本操作"
+            ],
+            "summary": "学习如何连接网络和使用浏览器访问网页",
+            "title": "网络连接与浏览器"
+          },
+          {
+            "content": "培养基本的网络安全意识和良好上网习惯",
+            "duration": 5,
+            "id": "3-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "密码安全",
+              "防范网络诈骗"
+            ],
+            "summary": "了解网络安全风险，学会保护个人信息和防范网络陷阱",
+            "title": "网络安全常识"
+          }
+        ],
+        "title": "网络基础知识"
+      }
+    ],
+    "duration": 45,
+    "grade": "初中一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握计算机基本操作和文件管理技能",
+    "title": "信息技术基础"
+  },
+  "contents": [],
+  "topic": "信息技术基础",
+  "preview": "信息技术"
+}

@@ -1,0 +1,120 @@
+{
+  "id": "course_1776837337278",
+  "name": "Python编程基础",
+  "createdAt": "2026-04-22T05:55:37.278Z",
+  "updatedAt": "2026-04-23T23:27:34.973431",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 30,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "介绍Python语言特点、发展历史和应用领域，安装配置Python开发环境",
+            "duration": 15,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "Python语言特点",
+              "开发环境安装",
+              "IDE使用基础"
+            ],
+            "summary": "了解Python语言优势及在数据科学、人工智能等领域的应用",
+            "title": "Python简介与环境配置"
+          },
+          {
+            "content": "编写并运行Hello World程序，学习代码注释和基本语法规则",
+            "duration": 15,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "print函数使用",
+              "代码注释",
+              "PEP8规范"
+            ],
+            "summary": "掌握print函数输出、代码注释方法和Python基本语法结构",
+            "title": "第一个Python程序"
+          }
+        ],
+        "title": "Python入门"
+      },
+      {
+        "duration": 30,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习变量命名规则、赋值语句和多重赋值",
+            "duration": 15,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "变量命名规范",
+              "赋值操作",
+              "数据类型转换"
+            ],
+            "summary": "掌握Python变量的定义方式和使用规则",
+            "title": "变量与赋值"
+          },
+          {
+            "content": "学习整数、浮点数、字符串、布尔值四种基本数据类型及其运算",
+            "duration": 15,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "数值运算",
+              "字符串切片",
+              "布尔逻辑"
+            ],
+            "summary": "掌握不同数据类型的表示方法和基本操作",
+            "title": "基本数据类型"
+          }
+        ],
+        "title": "变量与数据类型"
+      },
+      {
+        "duration": 30,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习if、elif、else语句实现程序分支判断",
+            "duration": 15,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "if-elif-else结构",
+              "嵌套条件",
+              "比较运算符"
+            ],
+            "summary": "掌握条件判断逻辑和选择结构程序设计",
+            "title": "条件语句"
+          },
+          {
+            "content": "学习for循环和while循环实现重复执行，掌握break和continue控制",
+            "duration": 15,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "for循环遍历",
+              "while循环",
+              "循环控制语句"
+            ],
+            "summary": "掌握循环结构的实现和控制语句使用方法",
+            "title": "循环语句"
+          }
+        ],
+        "title": "程序控制结构"
+      }
+    ],
+    "duration": 90,
+    "grade": "高中一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握Python基础语法，能够独立编写简单的程序解决实际问题",
+    "title": "Python编程基础"
+  },
+  "contents": [],
+  "topic": "Python编程基础",
+  "preview": "信息技术"
+}

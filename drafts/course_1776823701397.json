@@ -1,0 +1,119 @@
+{
+  "id": "course_1776823701397",
+  "name": "我要java的课程大纲",
+  "createdAt": "2026-04-22T02:08:21.397Z",
+  "updatedAt": "2026-04-23T23:27:34.969430",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 15,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "介绍Python的发展历史和特点",
+            "duration": 5,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "Python历史",
+              "语言特点",
+              "应用领域"
+            ],
+            "summary": "了解Python语言背景",
+            "title": "1.1 Python简介"
+          },
+          {
+            "content": "安装Python和配置开发环境",
+            "duration": 10,
+            "id": "1-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "安装Python",
+              "配置IDE"
+            ],
+            "summary": "完成开发环境准备",
+            "title": "1.2 环境搭建"
+          }
+        ],
+        "title": "第一章：Python入门"
+      },
+      {
+        "duration": 20,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习整数、浮点数、字符串等基本数据类型",
+            "duration": 10,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "int整数",
+              "float浮点数",
+              "str字符串"
+            ],
+            "summary": "掌握基本数据类型",
+            "title": "2.1 基本数据类型"
+          },
+          {
+            "content": "学习变量声明、赋值以及运算符使用",
+            "duration": 10,
+            "id": "2-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "变量赋值",
+              "算术运算符",
+              "比较运算符"
+            ],
+            "summary": "理解变量和运算符",
+            "title": "2.2 变量与运算符"
+          }
+        ],
+        "title": "第二章：数据类型与变量"
+      },
+      {
+        "duration": 25,
+        "id": "3",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "学习if-elif-else条件语句",
+            "duration": 12,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "if语句",
+              "elif多条件",
+              "嵌套条件"
+            ],
+            "summary": "掌握条件判断",
+            "title": "3.1 条件语句"
+          },
+          {
+            "content": "学习for和while循环",
+            "duration": 13,
+            "id": "3-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "for循环",
+              "while循环",
+              "break/continue"
+            ],
+            "summary": "掌握循环结构",
+            "title": "3.2 循环语句"
+          }
+        ],
+        "title": "第三章：控制流程"
+      }
+    ],
+    "duration": 60,
+    "grade": "大学一年级",
+    "subject": "信息技术",
+    "teachingGoal": "通过本课程的学习，学生能够掌握Python的基本语法和编程思想，为后续深入学习打下坚实基础。",
+    "title": "我要java的课程大纲"
+  },
+  "contents": [],
+  "topic": "我要java的课程大纲",
+  "preview": "信息技术"
+}

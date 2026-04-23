@@ -1,0 +1,182 @@
+{
+  "id": "course_1776851069489",
+  "name": "Python编程基础",
+  "createdAt": "2026-04-22T09:44:29.489Z",
+  "updatedAt": "2026-04-23T23:27:34.977426",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 15,
+        "id": "1",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "介绍Python的发展历史、语言特点和应用领域",
+            "duration": 8,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "Python语言特点",
+              "主要应用领域"
+            ],
+            "summary": "了解Python语言的优势和适用场景",
+            "title": "Python简介与特点"
+          },
+          {
+            "content": "安装Python解释器和配置开发环境",
+            "duration": 7,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "Python安装",
+              "第一个程序Hello World"
+            ],
+            "summary": "掌握Python开发环境的搭建和第一个程序运行",
+            "title": "开发环境安装与配置"
+          }
+        ],
+        "title": "Python简介与环境搭建"
+      },
+      {
+        "duration": 25,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习Python中的变量声明和基本数据类型",
+            "duration": 10,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "变量命名规则",
+              "整型、浮点型、字符串、布尔型"
+            ],
+            "summary": "掌握变量定义和常用数据类型的使用",
+            "title": "变量与数据类型"
+          },
+          {
+            "content": "学习算术运算符、比较运算符和逻辑运算符",
+            "duration": 8,
+            "id": "2-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "算术运算符",
+              "比较运算符",
+              "逻辑运算符"
+            ],
+            "summary": "掌握各种运算符的使用方法和表达式编写",
+            "title": "运算符与表达式"
+          },
+          {
+            "content": "学习使用print()输出和input()获取用户输入",
+            "duration": 7,
+            "id": "2-3",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "print()函数",
+              "input()函数"
+            ],
+            "summary": "掌握程序与用户交互的基本方法",
+            "title": "基本输入输出"
+          }
+        ],
+        "title": "Python基础语法"
+      },
+      {
+        "duration": 20,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习if、elif、else条件判断语句的使用",
+            "duration": 10,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "if语句结构",
+              "多分支条件判断"
+            ],
+            "summary": "掌握程序的条件分支逻辑实现",
+            "title": "条件语句"
+          },
+          {
+            "content": "学习for循环和while循环的实现",
+            "duration": 10,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "for循环",
+              "while循环",
+              "break和continue"
+            ],
+            "summary": "掌握程序中重复执行代码的逻辑控制",
+            "title": "循环语句"
+          }
+        ],
+        "title": "控制结构"
+      },
+      {
+        "duration": 20,
+        "id": "4",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习自定义函数的创建、参数传递和返回值",
+            "duration": 12,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "def关键字",
+              "参数传递",
+              "return返回值"
+            ],
+            "summary": "掌握代码封装和复用的基本方法",
+            "title": "函数定义与调用"
+          },
+          {
+            "content": "学习Python常用内置函数的使用",
+            "duration": 8,
+            "id": "4-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "len()",
+              "range()",
+              "type()"
+            ],
+            "summary": "掌握常用内置函数提高编程效率",
+            "title": "常用内置函数"
+          }
+        ],
+        "title": "函数与模块"
+      },
+      {
+        "duration": 10,
+        "id": "5",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "综合运用所学知识完成一个完整的猜数字游戏",
+            "duration": 10,
+            "id": "5-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "综合运用知识",
+              "问题分析与解决"
+            ],
+            "summary": "巩固Python基础语法，独立完成小型项目",
+            "title": "猜数字游戏实战"
+          }
+        ],
+        "title": "综合实践"
+      }
+    ],
+    "duration": 90,
+    "grade": "大学一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握Python基础语法和编程思维，能够独立编写简单的Python程序",
+    "title": "Python编程基础"
+  },
+  "contents": [],
+  "topic": "Python编程基础",
+  "preview": "信息技术"
+}

@@ -1,0 +1,154 @@
+{
+  "id": "course_1776855524137",
+  "name": "信息技术基础",
+  "createdAt": "2026-04-22T10:58:44.137Z",
+  "updatedAt": "2026-04-23T23:27:34.994432",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "介绍计算机从第一代到现代的发展历程和重要里程碑",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "计算机发展五个阶段",
+              "各阶段代表机型",
+              "发展趋势"
+            ],
+            "summary": "了解计算机发展的五个阶段及其特点",
+            "title": "计算机发展简史"
+          },
+          {
+            "content": "讲解计算机硬件系统和软件系统的基本构成",
+            "duration": 10,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "计算机五大部件",
+              "硬件与软件关系",
+              "系统软件与应用软件"
+            ],
+            "summary": "认识计算机的硬件组成和软件分类",
+            "title": "计算机系统组成"
+          }
+        ],
+        "title": "计算机基础知识"
+      },
+      {
+        "duration": 25,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习Windows操作系统的基本界面和操作方法",
+            "duration": 15,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "桌面图标操作",
+              "窗口基本操作",
+              "任务栏使用"
+            ],
+            "summary": "掌握桌面、任务栏、开始菜单的基本操作",
+            "title": "Windows基本操作"
+          },
+          {
+            "content": "掌握文件和文件夹的创建、命名、移动、复制和删除操作",
+            "duration": 10,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "文件命名规则",
+              "文件夹操作",
+              "路径概念"
+            ],
+            "summary": "能够熟练管理计算机中的文件和文件夹",
+            "title": "文件与文件夹管理"
+          }
+        ],
+        "title": "操作系统基础"
+      },
+      {
+        "duration": 25,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "了解互联网的基本概念、组成和工作原理",
+            "duration": 10,
+            "id": "3-1",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "互联网与万维网区别",
+              "IP地址基础",
+              "域名概念"
+            ],
+            "summary": "认识互联网的基本概念和常用术语",
+            "title": "认识互联网"
+          },
+          {
+            "content": "学习使用浏览器访问网页、收藏网页和设置主页",
+            "duration": 15,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "网址输入与访问",
+              "收藏夹使用",
+              "网页导航操作"
+            ],
+            "summary": "掌握主流浏览器的使用方法",
+            "title": "浏览器的基本使用"
+          }
+        ],
+        "title": "网络基础应用"
+      },
+      {
+        "duration": 20,
+        "id": "4",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "了解计算机病毒、网络诈骗的基本概念和防护方法",
+            "duration": 12,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "病毒防范措施",
+              "密码安全原则",
+              "数据备份意识"
+            ],
+            "summary": "掌握基本的计算机安全防护意识和技能",
+            "title": "计算机安全基础"
+          },
+          {
+            "content": "学习网络礼仪、知识产权保护和合理使用网络资源",
+            "duration": 8,
+            "id": "4-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "网络文明用语",
+              "知识产权保护",
+              "合理安排上网时间"
+            ],
+            "summary": "树立正确的网络道德观念和法制意识",
+            "title": "网络道德与规范"
+          }
+        ],
+        "title": "信息安全与伦理"
+      }
+    ],
+    "duration": 90,
+    "grade": "初中一年级",
+    "subject": "信息技术",
+    "teachingGoal": "学生能够掌握计算机基本操作技能和信息技术基础知识，具备初步的信息处理能力",
+    "title": "信息技术基础"
+  },
+  "contents": [],
+  "topic": "信息技术基础",
+  "preview": "信息技术"
+}

@@ -1,0 +1,147 @@
+{
+  "id": "course_1776858970573",
+  "name": "数字素养基础",
+  "createdAt": "2026-04-22T11:56:10.573Z",
+  "updatedAt": "2026-04-23T23:27:34.996430",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "了解计算机硬件系统基本构成",
+            "duration": 10,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "硬件组成",
+              "软件概念"
+            ],
+            "summary": "认识主机、显示器、键盘鼠标等设备",
+            "title": "认识计算机组成"
+          },
+          {
+            "content": "学习Windows基本操作界面",
+            "duration": 10,
+            "id": "1-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "桌面操作",
+              "文件管理"
+            ],
+            "summary": "掌握桌面、开始菜单、任务栏的使用",
+            "title": "操作系统入门"
+          }
+        ],
+        "title": "计算机基础知识"
+      },
+      {
+        "duration": 25,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "创建和编辑文档的常用功能",
+            "duration": 15,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "文档创建",
+              "格式设置",
+              "保存打印"
+            ],
+            "summary": "掌握文字输入、排版和保存",
+            "title": "Word基础操作"
+          },
+          {
+            "content": "文档中插入图片和表格",
+            "duration": 10,
+            "id": "2-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "插入图片",
+              "表格制作"
+            ],
+            "summary": "学会制作图文并茂的文档",
+            "title": "图文排版技巧"
+          }
+        ],
+        "title": "文字处理与文档编辑"
+      },
+      {
+        "duration": 25,
+        "id": "3",
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "content": "使用浏览器查找网络资源",
+            "duration": 12,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "网址访问",
+              "搜索引擎使用"
+            ],
+            "summary": "掌握网址输入和信息搜索技巧",
+            "title": "浏览器与搜索"
+          },
+          {
+            "content": "收发邮件的基本操作",
+            "duration": 13,
+            "id": "3-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "邮箱注册",
+              "附件发送"
+            ],
+            "summary": "学会注册邮箱和发送邮件",
+            "title": "电子邮件使用"
+          }
+        ],
+        "title": "网络应用基础"
+      },
+      {
+        "duration": 20,
+        "id": "4",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "识别网络陷阱和保护个人信息",
+            "duration": 12,
+            "id": "4-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "密码安全",
+              "防诈骗"
+            ],
+            "summary": "了解常见网络安全威胁和防范方法",
+            "title": "网络安全意识"
+          },
+          {
+            "content": "遵守网络行为规范",
+            "duration": 8,
+            "id": "4-2",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "文明上网",
+              "版权意识"
+            ],
+            "summary": "树立文明上网观念",
+            "title": "网络道德与法规"
+          }
+        ],
+        "title": "网络安全与规范"
+      }
+    ],
+    "duration": 90,
+    "grade": "初中一年级",
+    "subject": "信息技术",
+    "teachingGoal": "掌握基本计算机操作技能和网络安全意识",
+    "title": "数字素养基础"
+  },
+  "contents": [],
+  "topic": "数字素养基础",
+  "preview": "信息技术"
+}

@@ -1,0 +1,150 @@
+{
+  "id": "course_1776861214318",
+  "name": "123课程大纲",
+  "createdAt": "2026-04-22T12:33:34.318Z",
+  "updatedAt": "2026-04-23T23:27:34.979422",
+  "courseDoc": {
+    "chapters": [
+      {
+        "duration": 20,
+        "id": "1",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "通过实物和图片直观认识1-10的数字，理解每个数字表示的数量含义",
+            "duration": 7,
+            "id": "1-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "数字1-10的认读",
+              "数量对应关系"
+            ],
+            "summary": "能够正确认读1-10的数字，建立数量对应关系",
+            "title": "认识数字1-10"
+          },
+          {
+            "content": "学习两位数的组成方式，理解十位和个位的概念",
+            "duration": 7,
+            "id": "1-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "两位数组成",
+              "十位概念"
+            ],
+            "summary": "掌握11-20数字的认读，了解十进制的基础概念",
+            "title": "认识数字11-20"
+          },
+          {
+            "content": "扩展认识21-100的数字，掌握数数的方法和规律",
+            "duration": 6,
+            "id": "1-3",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "大数认读",
+              "数数规律"
+            ],
+            "summary": "能够认读21-100的数字，学会按规律数数",
+            "title": "认识数字21-100"
+          }
+        ],
+        "title": "数字认知"
+      },
+      {
+        "duration": 20,
+        "id": "2",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "学习1-5的正确笔画顺序和书写规范，掌握基本数字的书写技巧",
+            "duration": 7,
+            "id": "2-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "笔画顺序",
+              "书写规范"
+            ],
+            "summary": "能够按正确笔顺书写1-5，书写规范工整",
+            "title": "数字1-5的书写"
+          },
+          {
+            "content": "学习6-9的正确笔画顺序，重点掌握易混淆数字的区分",
+            "duration": 7,
+            "id": "2-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "易混淆数字区分",
+              "笔画准确性"
+            ],
+            "summary": "能够正确书写6-9，区分相似数字",
+            "title": "数字6-9的书写"
+          },
+          {
+            "content": "学习数字0的写法，掌握两位数的规范书写格式",
+            "duration": 6,
+            "id": "2-3",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "0的书写",
+              "两位数格式"
+            ],
+            "summary": "掌握0的书写，会正确书写两位数",
+            "title": "数字0和两位数书写"
+          }
+        ],
+        "title": "数字书写"
+      },
+      {
+        "duration": 20,
+        "id": "3",
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "content": "通过实物操作理解加法的含义，掌握10以内加法的计算方法",
+            "duration": 7,
+            "id": "3-1",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "加法意义",
+              "凑十法"
+            ],
+            "summary": "理解加法概念，能够计算10以内加法",
+            "title": "10以内加法"
+          },
+          {
+            "content": "通过实物操作理解减法的含义，掌握10以内减法的计算方法",
+            "duration": 7,
+            "id": "3-2",
+            "isKeyPoint": true,
+            "keyPoints": [
+              "减法意义",
+              "逆运算关系"
+            ],
+            "summary": "理解减法概念，能够计算10以内减法",
+            "title": "10以内减法"
+          },
+          {
+            "content": "将加减法应用于实际情境，学会分析简单应用题并列出算式",
+            "duration": 6,
+            "id": "3-3",
+            "isKeyPoint": false,
+            "keyPoints": [
+              "题意理解",
+              "列式计算"
+            ],
+            "summary": "能够读懂简单应用题，正确列出算式求解",
+            "title": "简单应用题"
+          }
+        ],
+        "title": "基础运算"
+      }
+    ],
+    "duration": 60,
+    "grade": "小学一年级",
+    "subject": "数学",
+    "teachingGoal": "掌握1-100数字的认读写能力，建立基础的数感和简单运算能力",
+    "title": "123课程大纲"
+  },
+  "contents": [],
+  "topic": "123课程大纲",
+  "preview": "数学"
+}
