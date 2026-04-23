@@ -126,44 +126,46 @@ class CourseGenerator:
 
     def _extract_topic_from_history(self, message: str, conversation_history: list) -> Optional[str]:
         """
-        从对话历史中提取主题（用于代词指代的情况）
-        例如用户说"根据这个帮我生成大纲"，需要从历史中找出"这个"指代什么
-        优先从AI回复中提取课程主题，只看最近2条消息
+        最简单暴力的提取：找所有看起来像课程名的中文词组
         """
         import re
 
-        # 代词触发时，只看最近2条消息，避免往前翻太多
-        recent_history = conversation_history[-2:] if len(conversation_history) > 2 else conversation_history
+        # 从最近5条消息中找
+        recent = conversation_history[-5:] if len(conversation_history) > 5 else conversation_history
 
-        # 从最新的消息开始倒序查找（优先找AI回复中的课程主题）
-        for msg in reversed(recent_history):
-            content = msg.get('content', '')
-            if not content or len(content) < 5:
-                continue
-
-            # 只从AI回复中提取课程主题
+        # 合并所有消息内容（优先AI回复）
+        all_text = []
+        for msg in reversed(recent):
             if msg.get('role') == 'assistant':
-                course_patterns = [
-                    r'#{1,3}\s*📚\s*([^\n]+)',         # ## 📚 ABC英语字母学习课程（直接截取到换行，最简单暴力）
-                    r'《([^》]+)》',                       # 《Python课程》
-                    r'【([^】]+)】',                       # 【Python课程】
-                    r'📚\s*\*\*(.+?)\*\*',             # 📚 **课程名**
-                    r'你可以学习(.+?)课程',
-                    r'关于(.+?)课程',                   # 关于英语字母学习课程
-                    r'正好适合你！',
-                ]
-                for pattern in course_patterns:
-                    match = re.search(pattern, content)
-                    if match:
-                        topic = match.group(1).strip() if match.group(1) else None
-                        # 清理残留的 markdown 符号
-                        if topic:
-                            topic = topic.replace('**', '').strip()
-                        if topic and len(topic) >= 2:
-                            logger.debug(f"[CourseGenerator] Topic extracted via pattern '{pattern}': {topic}")
-                            return topic
+                all_text.append(msg.get('content', ''))
 
-        logger.debug(f"[CourseGenerator] No topic extracted from history for message: {message[:50] if message else None}")
+        # 找 ## 📚 标题行
+        for text in all_text:
+            # 匹配 ## 📚 xxx课程 这样的行
+            match = re.search(r'#{1,3}\s*📚\s*([^\n\d]+?课程)', text)
+            if match:
+                topic = match.group(1).replace('**', '').strip()
+                if topic and len(topic) >= 4:
+                    logger.info(f"[CG] Found topic: {topic}")
+                    return topic
+
+        # 兜底：找"关于xxx课程"
+        for text in all_text:
+            match = re.search(r'关于([^课程]+)课程', text)
+            if match:
+                topic = match.group(1) + '课程'
+                if len(topic) >= 4:
+                    logger.info(f"[CG] Found topic via 关于: {topic}")
+                    return topic
+
+        # 兜底：找"xxx英语字母学习课程"等常见模式
+        for text in all_text:
+            match = re.search(r'([\u4e00-\u9fa5]+英语字母学习课程)', text)
+            if match:
+                logger.info(f"[CG] Found topic via 英语字母: {match.group(1)}")
+                return match.group(1)
+
+        logger.warning("[CG] No topic found in history!")
         return None
 
     def generate_course_stream(self, topic: str) -> Generator[str, None, None]:
