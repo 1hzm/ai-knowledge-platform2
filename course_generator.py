@@ -95,8 +95,24 @@ class CourseGenerator:
         for pattern in explicit_patterns:
             match = re.search(pattern, message)
             if match:
-                topic = match.group(1).strip() if match.groups() and match.group(1) else message.strip()
-                if topic and len(topic) > 1:
+                topic = None
+                if match.groups() and match.group(1):
+                    topic = match.group(1).strip()
+
+                # 如果有代词，不使用 explicit pattern 的 fallback topic（可能无意义）
+                # 强制走历史提取
+                if has_pronoun:
+                    topic = None
+
+                if topic and len(topic) >= 2:
+                    return {'topic': topic}
+                elif has_pronoun and conversation_history:
+                    # 有代词但 explicit pattern 没提取到有意义 topic → 走历史
+                    extracted = self._extract_topic_from_history(message, conversation_history)
+                    if extracted:
+                        return {'topic': extracted}
+                    return None  # 有代词但历史也找不到 → 不触发
+                elif topic:
                     return {'topic': topic}
 
         # 如果有代词但没有匹配显式模式，尝试从历史中找主题
