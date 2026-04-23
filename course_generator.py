@@ -64,33 +64,35 @@ class CourseGenerator:
     def parse_course_request(self, message: str) -> Optional[dict]:
         """
         解析课程大纲生成请求
-        匹配格式：生成课程大纲 / 设计课程 / 制作课程 / 创建课程大纲 等
+        只有明确包含"帮我生成课程"、"设计课程大纲"等显式关键词才触发
+        其他全部返回 None（普通聊天）
         """
         import re
-        # 去掉常见前缀
-        patterns = [
-            r'(?:生成|设计|制作|创建|给我制定).{0,10}?课程.{0,10}?大纲',
-            r'(?:生成|设计|制作|创建).{0,10}?课程',
-            r'帮我.{0,10}?课程.{0,10}?设计',
-            r'^课程大纲[:：]?\s*(.+)',
-            r'^(.+?)课程大纲?$',
+
+        # 专门意图模式（必须明确匹配）
+        explicit_patterns = [
+            r'生成课程大纲',
+            r'设计课程大纲',
+            r'制作课程大纲',
+            r'创建课程大纲',
+            r'帮我生成课程',
+            r'帮我设计课程',
+            r'帮我制作课程',
+            r'帮我创建课程',
+            r'给我生成课程',
+            r'给我设计课程',
+            r'课程大纲[:：]?\s*(.+)',
+            r'^(.+?)课程大纲$',
         ]
-        for pattern in patterns:
+
+        for pattern in explicit_patterns:
             match = re.search(pattern, message)
             if match:
-                topic = match.group(1).strip() if match.groups() else message.strip()
+                topic = match.group(1).strip() if match.groups() and match.group(1) else message.strip()
                 if topic and len(topic) > 1:
                     return {'topic': topic}
-        # 兜底：纯主题词也识别（但排除纯问候语、闲聊和命令）
-        casual_keywords = [
-            # 问候语
-            '你好', '您好', '嗨', 'hi', 'hello', 'hey', '在吗', '在不在', '干嘛', '干啥', '忙吗', '最近怎样', '怎么样', '还好吗', '睡了吗', '早上好', '下午好', '晚上好', '晚安', '再见', '拜拜', '谢谢', '对不起', '抱歉', '哈哈', '呵呵', '嗯嗯', '好的', '收到', '知道', '明白',
-            # 记忆系统命令
-            '/set-name', '/preference', '/memory', '/history', '/new', '/clear-session', '/clear-memory', '/save-memory', '/search-memory',
-            '/set-name', '设置名字', '设置用户名',
-        ]
-        if len(message) < 50 and len(message) >= 2 and not any(k in message for k in ['帮我', '我想', '我要', '能不能', '会不会']) and not any(casual in message for casual in casual_keywords):
-            return {'topic': message.strip()}
+
+        # 不匹配任何显式模式 → 普通聊天，不触发课程生成
         return None
 
     def generate_course_stream(self, topic: str) -> Generator[str, None, None]:
