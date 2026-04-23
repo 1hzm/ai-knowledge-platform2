@@ -61,13 +61,20 @@ class CourseGenerator:
     def set_api_key(cls, api_key: str):
         cls.MINIMAX_API_KEY = api_key
 
-    def parse_course_request(self, message: str) -> Optional[dict]:
+    def parse_course_request(self, message: str, conversation_history: list = None) -> Optional[dict]:
         """
         解析课程大纲生成请求
         只有明确包含"帮我生成课程"、"设计课程大纲"等显式关键词才触发
         其他全部返回 None（普通聊天）
+
+        Args:
+            message: 用户输入的消息
+            conversation_history: 对话历史列表，用于理解上下文（如"这个"、"它"指代什么）
         """
         import re
+
+        # 如果消息中包含代词（这个、它、这个课程...），需要从历史中找指代内容
+        has_pronoun = any(k in message for k in ['这个', '它', '这个课程', '根据这个', '按照这个'])
 
         # 专门意图模式（必须明确匹配）
         explicit_patterns = [
@@ -92,7 +99,48 @@ class CourseGenerator:
                 if topic and len(topic) > 1:
                     return {'topic': topic}
 
+        # 如果有代词但没有匹配显式模式，尝试从历史中找主题
+        if has_pronoun and conversation_history:
+            topic = self._extract_topic_from_history(message, conversation_history)
+            if topic:
+                return {'topic': topic}
+
         # 不匹配任何显式模式 → 普通聊天，不触发课程生成
+        return None
+
+    def _extract_topic_from_history(self, message: str, conversation_history: list) -> Optional[str]:
+        """
+        从对话历史中提取主题（用于代词指代的情况）
+        例如用户说"根据这个帮我生成大纲"，需要从历史中找出"这个"指代什么
+        """
+        # 从最近的消息开始查找（倒序）
+        for msg in reversed(conversation_history):
+            content = msg.get('content', '')
+            # 跳过太短的消息（可能是简单的确认或问候）
+            if len(content) < 10:
+                continue
+            # 跳过纯AI响应的消息（通常是较长的内容，不需要从中提取主题）
+            if msg.get('role') == 'assistant' and len(content) > 200:
+                continue
+
+            # 尝试识别主题相关的关键词
+            import re
+            # 查找学科/课程相关词汇
+            subjects = ['Python', 'python', '数学', '语文', '英语', '历史', '地理', '物理', '化学',
+                       '生物', '信息技术', '编程', '课程', '教学', '学习']
+            for subject in subjects:
+                if subject in content:
+                    # 提取包含该关键词的完整句子作为主题
+                    sentences = re.split(r'[。！？\n]', content)
+                    for sentence in sentences:
+                        if subject in sentence and len(sentence) > 3:
+                            # 清理并返回
+                            topic = sentence.strip()
+                            # 去掉可能的前缀
+                            topic = re.sub(r'^(我想要|我想|我要|能不能|可以|帮我|给我)\s*', '', topic)
+                            if len(topic) > 2:
+                                return topic
+
         return None
 
     def generate_course_stream(self, topic: str) -> Generator[str, None, None]:

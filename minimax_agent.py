@@ -74,13 +74,21 @@ class MiniMaxAgent:
         """更新内容生成设置"""
         self.content_generator.update_settings(settings)
     
-    def check_teacher_request(self, message: str):
+    def check_teacher_request(self, message: str, conversation_history: list = None):
         """
         检查是否是教师辅助相关请求
         支持：制作PPT、预览PPT、列出PPT、生成讲义、列出讲义、生成课程大纲
+
+        Args:
+            message: 用户输入的消息
+            conversation_history: 对话历史列表，用于理解上下文（如"这个"、"它"指代什么）
         """
+        if conversation_history is None:
+            conversation_history = []
+
         # 检查是否是课程大纲生成请求（优先级高）
-        course_request = self.course_generator.parse_course_request(message)
+        # 如果消息中包含代词（这个、它、根据这个...），需要结合上下文解析
+        course_request = self.course_generator.parse_course_request(message, conversation_history)
         if course_request:
             topic = course_request['topic']
             return self.course_generator.generate_course_stream(topic)
@@ -831,19 +839,25 @@ class MiniMaxAgent:
         except Exception as e:
             yield f"❌ PPT 生成失败: {str(e)}"
     
-    def chat(self, message: str, stream: bool = False):
+    def chat(self, message: str, stream: bool = False, conversation_history: list = None):
         """
         发送消息给 MiniMax 模型
 
         Args:
             message: 用户输入的消息
             stream: 是否使用流式输出
+            conversation_history: 对话历史列表，用于理解上下文（如"这个"、"它"指代什么）
 
         Returns:
             完整回复字符串、流式生成器、或 PPT 预览字典
         """
+        # 使用传入的历史记录，如果没有则使用自身的对话历史
+        if conversation_history is None:
+            conversation_history = self.conversation_history
+
         # 首先检查是否是教师辅助相关请求（PPT、讲义等）
-        teacher_result = self.check_teacher_request(message)
+        # 传入对话历史以便在意图检测时理解上下文
+        teacher_result = self.check_teacher_request(message, conversation_history)
         if teacher_result:
             # 如果是字典（PPT预览数据），直接返回
             if isinstance(teacher_result, dict):

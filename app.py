@@ -295,9 +295,12 @@ def chat_stream():
     request_logger.info('[STREAM] 获取 Agent 实例')
     agent = get_agent(session_id)
 
+    # 获取对话历史用于上下文理解
+    conversation_history = agent.get_history()
+
     def generate():
         request_logger.info('[STREAM] 调用 agent.chat() - stream=True')
-        result = agent.chat(message, stream=True)
+        result = agent.chat(message, stream=True, conversation_history=conversation_history)
 
         # 优先检查是否是 PPT 预览数据字典（注意：字典也有 __iter__，必须先检查）
         if isinstance(result, dict) and result.get('type') == 'ppt_preview':
