@@ -145,11 +145,14 @@ class CourseGenerator:
             if msg.get('role') == 'assistant':
                 course_patterns = [
                     r'#{1,3}\s*📚\s*(.+?)(?:\n|$)',   # ## 📚 ABC英语字母学习课程
+                    r'#{1,3}\s*📚\s*(.+?)[\s\*\n]',   # ## 📚 课程名（后面可能是空格或*或换行）
                     r'#{1,3}\s*(.+?)(?:\n|$)',        # ## ABC英语字母学习课程
                     r'《(.+?)》',                       # 《Python课程》
                     r'【(.+?)】',                       # 【Python课程】
                     r'📚\s*\*\*(.+?)\*\*',             # 📚 **课程名**
                     r'你可以学习(.+?)课程',
+                    r'关于(.+?)课程',                   # 关于英语字母学习课程
+                    r'课程[一二三四五六七八九十]+[：:]\s*(.+?)(?:\n|$)',  # 课程一：ABC英语字母学习课程
                     r'正好适合你！',
                 ]
                 for pattern in course_patterns:
@@ -157,8 +160,10 @@ class CourseGenerator:
                     if match:
                         topic = match.group(1).strip() if match.group(1) else None
                         if topic and len(topic) >= 2:
+                            logger.debug(f"[CourseGenerator] Topic extracted via pattern '{pattern}': {topic}")
                             return topic
 
+        logger.debug(f"[CourseGenerator] No topic extracted from history for message: {message[:50] if message else None}")
         return None
 
     def generate_course_stream(self, topic: str) -> Generator[str, None, None]:
