@@ -112,32 +112,41 @@ class CourseGenerator:
         """
         从对话历史中提取主题（用于代词指代的情况）
         例如用户说"根据这个帮我生成大纲"，需要从历史中找出"这个"指代什么
+        需要同时看用户消息和AI回复，优先从AI回复中提取课程主题
         """
-        # 从最近的消息开始查找（倒序）
+        import re
+
+        # 从最新的消息开始倒序查找（优先找AI回复中的课程主题）
         for msg in reversed(conversation_history):
             content = msg.get('content', '')
-            # 跳过太短的消息（可能是简单的确认或问候）
-            if len(content) < 10:
-                continue
-            # 跳过纯AI响应的消息（通常是较长的内容，不需要从中提取主题）
-            if msg.get('role') == 'assistant' and len(content) > 200:
+            if not content or len(content) < 5:
                 continue
 
-            # 尝试识别主题相关的关键词
-            import re
-            # 查找学科/课程相关词汇
-            subjects = ['Python', 'python', '数学', '语文', '英语', '历史', '地理', '物理', '化学',
-                       '生物', '信息技术', '编程', '课程', '教学', '学习']
+            # 优先匹配AI回复中的课程相关模式
+            if msg.get('role') == 'assistant':
+                course_patterns = [
+                    r'《(.+?)》',  # 《Python课程》
+                    r'【(.+?)】',  # 【Python课程】
+                    r'📚\s*\*\*(.+?)\*\*',  # 📚 **课程名**
+                    r'你可以学习(.+?)课程',
+                    r'正好适合你！',
+                ]
+                for pattern in course_patterns:
+                    match = re.search(pattern, content)
+                    if match:
+                        topic = match.group(1).strip() if match.group(1) else None
+                        if topic and len(topic) >= 2:
+                            return topic
+
+            # 用户消息中查找课程相关词汇
+            subjects = ['课程', '学习', '教学', '培训', '教学']
             for subject in subjects:
                 if subject in content:
-                    # 提取包含该关键词的完整句子作为主题
                     sentences = re.split(r'[。！？\n]', content)
                     for sentence in sentences:
-                        if subject in sentence and len(sentence) > 3:
-                            # 清理并返回
+                        if subject in sentence and len(sentence) > 5:
                             topic = sentence.strip()
-                            # 去掉可能的前缀
-                            topic = re.sub(r'^(我想要|我想|我要|能不能|可以|帮我|给我)\s*', '', topic)
+                            topic = re.sub(r'^(我想要|我想|我要|能不能|可以|帮我|给我|根据|按照)\s*', '', topic)
                             if len(topic) > 2:
                                 return topic
 
