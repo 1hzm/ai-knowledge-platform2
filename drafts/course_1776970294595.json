@@ -1,0 +1,132 @@
+{
+  "id": "course_1776970294595",
+  "name": "数字素养与信息检索",
+  "createdAt": "2026-04-23T18:51:34.595Z",
+  "courseDoc": {
+    "title": "数字素养与信息检索",
+    "subject": "信息技术",
+    "grade": "初中一年级",
+    "duration": 90,
+    "teachingGoal": "学生能够熟练使用搜索引擎检索信息，并具备辨别信息真伪的基本能力",
+    "chapters": [
+      {
+        "id": "1",
+        "title": "数字素养概述",
+        "duration": 20,
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "id": "1-1",
+            "title": "什么是数字素养",
+            "content": "介绍数字素养的定义、内涵及其在现代社会的重要性",
+            "summary": "理解数字素养的概念，认识其在学习和生活中的应用价值",
+            "keyPoints": [
+              "数字素养的定义",
+              "数字素养的核心能力"
+            ],
+            "isKeyPoint": true,
+            "duration": 10
+          },
+          {
+            "id": "1-2",
+            "title": "数字时代的挑战",
+            "content": "分析网络信息爆炸时代带来的机遇与挑战",
+            "summary": "认识信息过载问题，了解培养信息处理能力的必要性",
+            "keyPoints": [
+              "信息过载现象",
+              "信息处理能力的重要性"
+            ],
+            "isKeyPoint": false,
+            "duration": 10
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "title": "信息检索基础",
+        "duration": 25,
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "id": "2-1",
+            "title": "搜索引擎的使用技巧",
+            "content": "学习主流搜索引擎的高级功能和搜索技巧",
+            "summary": "掌握基本的搜索语法和筛选功能，提高检索效率",
+            "keyPoints": [
+              "搜索语法运用",
+              "搜索结果筛选"
+            ],
+            "isKeyPoint": true,
+            "duration": 15
+          },
+          {
+            "id": "2-2",
+            "title": "关键词的选择策略",
+            "content": "学习如何选择有效的关键词以获得准确的搜索结果",
+            "summary": "掌握关键词提炼方法，避免常见检索误区",
+            "keyPoints": [
+              "关键词提炼",
+              "同义词扩展"
+            ],
+            "isKeyPoint": false,
+            "duration": 10
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "title": "信息评估与辨别",
+        "duration": 30,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "3-1",
+            "title": "判断信息可信度",
+            "content": "学习评估信息来源可靠性的方法和标准",
+            "summary": "掌握判断网站可信度、作者权威性的基本方法",
+            "keyPoints": [
+              "信息来源评估",
+              "网站可信度判断"
+            ],
+            "isKeyPoint": true,
+            "duration": 15
+          },
+          {
+            "id": "3-2",
+            "title": "识别虚假信息",
+            "content": "识别网络谣言、假新闻和误导性信息的特征",
+            "summary": "了解虚假信息的常见特征和传播规律，培养防范意识",
+            "keyPoints": [
+              "假新闻特征",
+              "信息核实方法"
+            ],
+            "isKeyPoint": true,
+            "duration": 15
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "title": "信息整理与应用",
+        "duration": 15,
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "id": "4-1",
+            "title": "信息整理与笔记方法",
+            "content": "学习有效的信息整理技巧和笔记记录方法",
+            "summary": "掌握数字笔记工具的使用，能够系统整理检索到的信息",
+            "keyPoints": [
+              "信息分类整理",
+              "数字笔记工具"
+            ],
+            "isKeyPoint": false,
+            "duration": 15
+          }
+        ]
+      }
+    ]
+  },
+  "contents": [],
+  "updatedAt": "2026-04-24T02:51:34.801170"
+}

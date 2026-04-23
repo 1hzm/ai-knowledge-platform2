@@ -1,0 +1,92 @@
+{
+  "id": "course_1776969812843",
+  "name": "我要这个的课程大纲",
+  "createdAt": "2026-04-23T18:43:32.843Z",
+  "courseDoc": {
+    "title": "我要这个的课程大纲",
+    "subject": "教育技术",
+    "grade": "高等教育",
+    "duration": 60,
+    "teachingGoal": "掌握课程大纲设计的基本原理和方法，能够独立设计合理的课程大纲。",
+    "chapters": [
+      {
+        "id": "1",
+        "title": "课程大纲设计基础",
+        "duration": 30,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "1-1",
+            "title": "课程大纲的定义与作用",
+            "content": "介绍课程大纲的定义、作用及其在教育中的重要性。",
+            "summary": "理解课程大纲的基本概念及其在教育中的核心作用。",
+            "keyPoints": [
+              "课程大纲的定义",
+              "课程大纲的作用"
+            ],
+            "isKeyPoint": true,
+            "duration": 15
+          },
+          {
+            "id": "1-2",
+            "title": "课程大纲的基本结构",
+            "content": "详细讲解课程大纲的基本组成部分及其设计要点。",
+            "summary": "掌握课程大纲的基本结构及其设计原则。",
+            "keyPoints": [
+              "课程大纲的基本组成部分",
+              "设计要点"
+            ],
+            "isKeyPoint": true,
+            "duration": 15
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "title": "课程大纲设计实践",
+        "duration": 30,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "2-1",
+            "title": "教学目标设计",
+            "content": "讲解如何根据学科和学生特点设计合理的教学目标。",
+            "summary": "学会根据不同情境设计有效的教学目标。",
+            "keyPoints": [
+              "教学目标的分类",
+              "设计原则"
+            ],
+            "isKeyPoint": true,
+            "duration": 10
+          },
+          {
+            "id": "2-2",
+            "title": "教学内容组织",
+            "content": "介绍如何合理组织教学内容，包括章节划分和课时分配。",
+            "summary": "掌握教学内容组织的基本方法和技巧。",
+            "keyPoints": [
+              "章节划分",
+              "课时分配"
+            ],
+            "isKeyPoint": true,
+            "duration": 10
+          },
+          {
+            "id": "2-3",
+            "title": "教学评估设计",
+            "content": "讲解如何设计科学的教学评估方式，确保教学目标的实现。",
+            "summary": "学会设计有效的教学评估方案。",
+            "keyPoints": [
+              "评估方式",
+              "评估标准"
+            ],
+            "isKeyPoint": true,
+            "duration": 10
+          }
+        ]
+      }
+    ]
+  },
+  "contents": [],
+  "updatedAt": "2026-04-24T02:43:33.388064"
+}

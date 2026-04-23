@@ -1,0 +1,118 @@
+{
+  "id": "course_1776972924855",
+  "name": "人工智能应用基础",
+  "createdAt": "2026-04-23T19:35:24.855Z",
+  "courseDoc": {
+    "title": "人工智能应用基础",
+    "subject": "信息技术",
+    "grade": "高中一年级",
+    "duration": 90,
+    "teachingGoal": "掌握人工智能基本概念、主要技术原理及其在生活和工作中的实际应用场景",
+    "chapters": [
+      {
+        "id": "1",
+        "title": "人工智能概述",
+        "duration": 30,
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "id": "1-1",
+            "title": "什么是人工智能",
+            "content": "介绍人工智能的定义、发展历程和研究领域",
+            "summary": "理解人工智能的基本概念和范畴",
+            "keyPoints": [
+              "人工智能的定义",
+              "人工智能的三大流派",
+              "AI发展史上的重要里程碑"
+            ],
+            "isKeyPoint": true,
+            "duration": 15
+          },
+          {
+            "id": "1-2",
+            "title": "人工智能的影响与意义",
+            "content": "分析人工智能对社会、经济和生活的深远影响",
+            "summary": "认识AI技术的重要性和发展趋势",
+            "keyPoints": [
+              "AI对各行业的影响",
+              "AI带来的机遇与挑战",
+              "未来发展趋势"
+            ],
+            "isKeyPoint": false,
+            "duration": 15
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "title": "人工智能核心技术",
+        "duration": 50,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "2-1",
+            "title": "机器学习基础",
+            "content": "讲解机器学习的基本原理、主要类型和应用方法",
+            "summary": "掌握机器学习的核心概念和基本算法",
+            "keyPoints": [
+              "监督学习与无监督学习",
+              "训练集与测试集概念",
+              "常见机器学习算法"
+            ],
+            "isKeyPoint": true,
+            "duration": 20
+          },
+          {
+            "id": "2-2",
+            "title": "深度学习入门",
+            "content": "介绍神经网络的基本结构和深度学习的工作原理",
+            "summary": "理解深度学习如何实现复杂任务",
+            "keyPoints": [
+              "神经元与神经网络",
+              "卷积神经网络",
+              "循环神经网络"
+            ],
+            "isKeyPoint": true,
+            "duration": 20
+          },
+          {
+            "id": "2-3",
+            "title": "自然语言处理技术",
+            "content": "介绍NLP技术原理及其应用场景",
+            "summary": "了解计算机如何理解和处理人类语言",
+            "keyPoints": [
+              "文本预处理技术",
+              "情感分析应用",
+              "对话系统原理"
+            ],
+            "isKeyPoint": false,
+            "duration": 10
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "title": "人工智能应用实践",
+        "duration": 10,
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "id": "3-1",
+            "title": "生活中的AI应用",
+            "content": "展示人工智能在日常场景中的实际应用",
+            "summary": "识别身边无处不在的AI技术",
+            "keyPoints": [
+              "智能语音助手",
+              "推荐系统原理",
+              "图像识别应用"
+            ],
+            "isKeyPoint": false,
+            "duration": 10
+          }
+        ]
+      }
+    ]
+  },
+  "contents": [],
+  "updatedAt": "2026-04-24T03:35:24.877297"
+}

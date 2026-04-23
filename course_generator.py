@@ -244,7 +244,10 @@ class CourseGenerator:
             course_doc = None
 
         if course_doc:
+            request_logger.info(f'[COURSE_GEN] Yielding course_generated event: {course_doc.get("title", "unknown")}')
             yield {
                 'type': 'course_generated',
                 'data': course_doc
             }
+        else:
+            request_logger.warning(f'[COURSE_GEN] course_doc is None, no course_generated event yielded. full_text length={len(full_text) if full_text else 0}')

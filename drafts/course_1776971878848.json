@@ -1,0 +1,151 @@
+{
+  "id": "course_1776971878848",
+  "name": "高效学习方法指导",
+  "createdAt": "2026-04-23T19:17:58.848Z",
+  "courseDoc": {
+    "title": "高效学习方法指导",
+    "subject": "综合素养",
+    "grade": "初中一年级",
+    "duration": 90,
+    "teachingGoal": "掌握科学的学习方法，养成良好的学习习惯，提升学习效率",
+    "chapters": [
+      {
+        "id": "1",
+        "title": "认识学习",
+        "duration": 20,
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "id": "1-1",
+            "title": "什么是有效学习",
+            "content": "了解学习的本质和有效学习的基本概念",
+            "summary": "帮助学生理解学习的定义，区分有效学习与无效学习的区别",
+            "keyPoints": [
+              "学习的定义",
+              "有效学习特征",
+              "无效学习表现"
+            ],
+            "isKeyPoint": false,
+            "duration": 10
+          },
+          {
+            "id": "1-2",
+            "title": "学习习惯的重要性",
+            "content": "认识良好学习习惯对学习效果的影响",
+            "summary": "使学生意识到养成良好学习习惯的必要性",
+            "keyPoints": [
+              "习惯与成绩关系",
+              "优秀学习习惯特征"
+            ],
+            "isKeyPoint": true,
+            "duration": 10
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "title": "时间管理",
+        "duration": 25,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "2-1",
+            "title": "如何制定学习计划",
+            "content": "学习制定科学合理的学习计划的方法",
+            "summary": "让学生掌握制定学习计划的基本步骤和要点",
+            "keyPoints": [
+              "计划制定原则",
+              "目标分解方法",
+              "时间分配技巧"
+            ],
+            "isKeyPoint": true,
+            "duration": 12
+          },
+          {
+            "id": "2-2",
+            "title": "番茄工作法的应用",
+            "content": "学习使用番茄工作法提高学习专注度",
+            "summary": "掌握番茄工作法的原理和具体应用步骤",
+            "keyPoints": [
+              "番茄工作法原理",
+              "25+5法则",
+              "专注力提升技巧"
+            ],
+            "isKeyPoint": true,
+            "duration": 13
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "title": "高效记忆",
+        "duration": 25,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "3-1",
+            "title": "记忆的规律",
+            "content": "了解艾宾浩斯遗忘曲线和记忆规律",
+            "summary": "认识遗忘规律，掌握科学记忆的理论基础",
+            "keyPoints": [
+              "艾宾浩斯遗忘曲线",
+              "记忆编码过程",
+              "复习时机把握"
+            ],
+            "isKeyPoint": true,
+            "duration": 12
+          },
+          {
+            "id": "3-2",
+            "title": "记忆技巧与方法",
+            "content": "掌握多种实用的记忆技巧和方法",
+            "summary": "学会运用联想记忆、图像记忆等方法提升记忆力",
+            "keyPoints": [
+              "联想记忆法",
+              "图像记忆法",
+              "口诀记忆法"
+            ],
+            "isKeyPoint": true,
+            "duration": 13
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "title": "课堂学习技巧",
+        "duration": 20,
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "id": "4-1",
+            "title": "有效的听课方法",
+            "content": "学习如何提高课堂学习效率",
+            "summary": "掌握高效听课的技巧和方法，提升课堂吸收率",
+            "keyPoints": [
+              "课前预习重要性",
+              "课堂专注技巧",
+              "积极思考方法"
+            ],
+            "isKeyPoint": true,
+            "duration": 10
+          },
+          {
+            "id": "4-2",
+            "title": "笔记记录技巧",
+            "content": "学习科学有效的笔记方法",
+            "summary": "掌握康奈尔笔记法等科学的笔记记录方式",
+            "keyPoints": [
+              "康奈尔笔记法",
+              "重点标记方法",
+              "课后整理技巧"
+            ],
+            "isKeyPoint": false,
+            "duration": 10
+          }
+        ]
+      }
+    ]
+  },
+  "contents": [],
+  "updatedAt": "2026-04-24T03:17:58.860056"
+}

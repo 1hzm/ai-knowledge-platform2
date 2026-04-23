@@ -1,0 +1,157 @@
+{
+  "id": "course_1776972579010",
+  "name": "课程大纲设计方法",
+  "createdAt": "2026-04-23T19:29:39.010Z",
+  "courseDoc": {
+    "title": "课程大纲设计方法",
+    "subject": "教育学",
+    "grade": "通用（教育工作者）",
+    "duration": 90,
+    "teachingGoal": "掌握课程大纲设计的基本原理和方法，能够独立设计结构清晰、目标明确的课程大纲",
+    "chapters": [
+      {
+        "id": "1",
+        "title": "课程设计基础",
+        "duration": 20,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "1-1",
+            "title": "课程设计的核心要素",
+            "content": "介绍课程设计的四大核心要素：目标、内容、方法、评估",
+            "summary": "理解课程设计的基本框架和关键组成部分",
+            "keyPoints": [
+              "ADDIE模型",
+              "教学系统设计流程"
+            ],
+            "isKeyPoint": true,
+            "duration": 10
+          },
+          {
+            "id": "1-2",
+            "title": "需求分析与学情分析",
+            "content": "学习如何分析学习者特征和教学需求",
+            "summary": "掌握学习者分析和需求分析的基本方法",
+            "keyPoints": [
+              "学习者特征分析",
+              "教学需求调研方法"
+            ],
+            "isKeyPoint": false,
+            "duration": 10
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "title": "教学目标设定",
+        "duration": 20,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "2-1",
+            "title": "教学目标编写规范",
+            "content": "学习使用Bloom认知目标分类法编写教学目标",
+            "summary": "掌握编写清晰、具体、可评估的教学目标的方法",
+            "keyPoints": [
+              "Bloom分类法",
+              "ABCD编写法"
+            ],
+            "isKeyPoint": true,
+            "duration": 12
+          },
+          {
+            "id": "2-2",
+            "title": "层级目标体系构建",
+            "content": "建立课程目标、章节目标与课时目标的三级体系",
+            "summary": "理解目标的层次结构和逻辑关系",
+            "keyPoints": [
+              "目标层级化",
+              "上下位目标对应"
+            ],
+            "isKeyPoint": false,
+            "duration": 8
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "title": "内容结构规划",
+        "duration": 30,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "3-1",
+            "title": "章节与课时划分",
+            "content": "学习合理划分章节和分配课时的方法",
+            "summary": "掌握内容模块化组织和时间分配技巧",
+            "keyPoints": [
+              "模块化组织",
+              "课时分配原则"
+            ],
+            "isKeyPoint": true,
+            "duration": 10
+          },
+          {
+            "id": "3-2",
+            "title": "重点难点标注",
+            "content": "识别和标注课程的重难点内容",
+            "summary": "学会判断并标注核心知识点和教学难点",
+            "keyPoints": [
+              "重点识别标准",
+              "难点分析维度"
+            ],
+            "isKeyPoint": true,
+            "duration": 10
+          },
+          {
+            "id": "3-3",
+            "title": "教学活动设计",
+            "content": "为各小节设计相应的教学活动和策略",
+            "summary": "掌握多样化教学活动设计与选择方法",
+            "keyPoints": [
+              "讲授法",
+              "讨论法",
+              "案例法"
+            ],
+            "isKeyPoint": false,
+            "duration": 10
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "title": "评估与优化",
+        "duration": 20,
+        "isKeyPoint": false,
+        "sections": [
+          {
+            "id": "4-1",
+            "title": "形成性评价设计",
+            "content": "设计课堂检测和过程性评价任务",
+            "summary": "掌握设计有效的形成性评价方法",
+            "keyPoints": [
+              "课堂检测题",
+              "学习任务单"
+            ],
+            "isKeyPoint": false,
+            "duration": 10
+          },
+          {
+            "id": "4-2",
+            "title": "课程大纲优化迭代",
+            "content": "学习根据反馈优化课程大纲的方法",
+            "summary": "掌握大纲评审和持续改进的流程",
+            "keyPoints": [
+              "同行评审",
+              "PDCA循环"
+            ],
+            "isKeyPoint": false,
+            "duration": 10
+          }
+        ]
+      }
+    ]
+  },
+  "contents": [],
+  "updatedAt": "2026-04-24T03:29:39.024839"
+}

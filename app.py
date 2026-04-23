@@ -150,12 +150,18 @@ def course_stream():
     course_gen = CourseGenerator()
 
     def generate():
+        all_items = []
         full_text = ''
         try:
-            for chunk in course_gen.generate_course_stream(topic):
-                full_text += chunk
-                yield f"data: {json.dumps({'chunk': chunk}, ensure_ascii=False)}\n\n"
-            request_logger.info(f'[COURSE] 生成完成，文本长度: {len(full_text)}')
+            for item in course_gen.generate_course_stream(topic):
+                all_items.append(item)
+                if isinstance(item, str):
+                    full_text += item
+                    yield f"data: {json.dumps({'chunk': item}, ensure_ascii=False)}\n\n"
+                elif isinstance(item, dict) and item.get('type') == 'course_generated':
+                    request_logger.info(f'[COURSE] 获取到 course_generated: {item.get("data", {}).get("title", "unknown")}')
+                    yield f"data: {json.dumps(item, ensure_ascii=False)}\n\n"
+            request_logger.info(f'[COURSE] 生成完成，共 {len(all_items)} 个 items，文本长度: {len(full_text)}')
             yield f"data: {json.dumps({'done': True, 'result': full_text}, ensure_ascii=False)}\n\n"
         except Exception as e:
             request_logger.error(f'[COURSE] 生成错误: {e}')
@@ -400,6 +406,7 @@ def chat_stream():
                 # 情况6：课程大纲生成完成
                 elif isinstance(item, dict) and item.get('type') == 'course_generated':
                     course_data = item.get('data', {})
+                    request_logger.info(f'[STREAM] 发送 course_generated: {course_data.get("title", "unknown")}')
                     yield f"data: {json.dumps({'type': 'course_generated', 'data': course_data}, ensure_ascii=False)}\n\n"
 
                 # 其他情况：忽略

@@ -1,0 +1,119 @@
+{
+  "id": "course_1776971407590",
+  "name": "高效学习方法与技巧",
+  "createdAt": "2026-04-23T19:10:07.590Z",
+  "courseDoc": {
+    "title": "高效学习方法与技巧",
+    "subject": "学习方法",
+    "grade": "初中一年级",
+    "duration": 90,
+    "teachingGoal": "掌握科学的学习方法，提升学习效率与自主学习能力",
+    "chapters": [
+      {
+        "id": "1",
+        "title": "认识学习力",
+        "duration": 30,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "1-1",
+            "title": "什么是学习力",
+            "content": "理解学习力的概念及其组成要素",
+            "summary": "帮助学生建立对学习力的基本认知框架",
+            "keyPoints": [
+              "学习力定义",
+              "学习力三要素",
+              "学习力与成绩关系"
+            ],
+            "isKeyPoint": true,
+            "duration": 15
+          },
+          {
+            "id": "1-2",
+            "title": "自我学习力评估",
+            "content": "通过测评了解自身学习力水平与短板",
+            "summary": "帮助学生客观认识自己的学习能力现状",
+            "keyPoints": [
+              "评估工具使用",
+              "优势识别",
+              "薄弱环节分析"
+            ],
+            "isKeyPoint": false,
+            "duration": 15
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "title": "高效记忆技巧",
+        "duration": 30,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "2-1",
+            "title": "记忆的原理",
+            "content": "了解大脑记忆的基本原理和遗忘规律",
+            "summary": "掌握记忆的科学基础，为后续技巧学习打基础",
+            "keyPoints": [
+              "短期记忆转长期记忆",
+              "艾宾浩斯遗忘曲线",
+              "复习时机选择"
+            ],
+            "isKeyPoint": true,
+            "duration": 15
+          },
+          {
+            "id": "2-2",
+            "title": "实用记忆方法",
+            "content": "学习和掌握多种高效记忆技巧",
+            "summary": "学生能够运用至少三种记忆方法提升记忆效果",
+            "keyPoints": [
+              "联想记忆法",
+              "图像记忆法",
+              "口诀记忆法",
+              "间隔重复法"
+            ],
+            "isKeyPoint": true,
+            "duration": 15
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "title": "时间管理与计划",
+        "duration": 30,
+        "isKeyPoint": true,
+        "sections": [
+          {
+            "id": "3-1",
+            "title": "时间管理原则",
+            "content": "学习科学的时间分配与管理方法",
+            "summary": "帮助学生建立正确的时间观念",
+            "keyPoints": [
+              "四象限法则",
+              "番茄工作法",
+              "碎片时间利用"
+            ],
+            "isKeyPoint": true,
+            "duration": 15
+          },
+          {
+            "id": "3-2",
+            "title": "制定学习计划",
+            "content": "学习制定可执行的学习计划",
+            "summary": "学生能够独立制定周计划和日计划",
+            "keyPoints": [
+              "SMART目标原则",
+              "计划制定步骤",
+              "执行与复盘调整"
+            ],
+            "isKeyPoint": false,
+            "duration": 15
+          }
+        ]
+      }
+    ]
+  },
+  "contents": [],
+  "updatedAt": "2026-04-24T03:10:07.907657"
+}
